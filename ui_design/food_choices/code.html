@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Epicurean - Discover</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#313032",
+                    "on-tertiary": "#ffffff",
+                    "text-primary": "#1A1523",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e5e1e4",
+                    "tertiary-container": "#3b301b",
+                    "tertiary-fixed-dim": "#d7c4a6",
+                    "error": "#ba1a1a",
+                    "outline": "#77767e",
+                    "on-tertiary-container": "#a8977b",
+                    "on-tertiary-fixed-variant": "#52452e",
+                    "tertiary-fixed": "#f3e0c1",
+                    "background": "#fcf8fb",
+                    "surface-tint": "#5a5d76",
+                    "secondary-fixed": "#f0e1c8",
+                    "primary-container": "#2d3047",
+                    "on-error-container": "#93000a",
+                    "tertiary": "#251b08",
+                    "on-secondary-fixed-variant": "#4f4533",
+                    "surface": "#fcf8fb",
+                    "on-primary-fixed": "#171a30",
+                    "text-muted": "#5B586E",
+                    "accent-warm": "#F4EDE3",
+                    "on-primary-fixed-variant": "#42455d",
+                    "surface-container-low": "#f6f3f5",
+                    "primary-fixed": "#dfe0ff",
+                    "on-surface": "#1c1b1d",
+                    "surface-variant": "#e5e1e4",
+                    "on-primary-container": "#9598b3",
+                    "border-subtle": "rgba(26, 21, 35, 0.1)",
+                    "on-secondary-fixed": "#221b0b",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#c3c4e2",
+                    "inverse-on-surface": "#f3f0f2",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#dcd9db",
+                    "secondary-fixed-dim": "#d3c5ad",
+                    "surface-bright": "#fcf8fb",
+                    "outline-variant": "#c7c5cd",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#685d49",
+                    "on-secondary-container": "#6c614d",
+                    "secondary-container": "#eddec5",
+                    "on-background": "#1c1b1d",
+                    "surface-container-high": "#ebe7e9",
+                    "on-surface-variant": "#46464d",
+                    "primary": "#181b31",
+                    "surface-container": "#f0edef",
+                    "surface-main": "#FCFCFA",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#c3c4e2",
+                    "on-tertiary-fixed": "#241a07",
+                    
+                    "cream": "#FAF9F6",
+                    "peach-tint": "#FFF0E6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px",
+                    "img": "16px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "xs": "8px",
+                    "xl": "48px",
+                    "xxl": "64px",
+                    "lg": "32px",
+                    "sm": "16px"
+            },
+            "fontFamily": {
+                    "subheading-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-lg": [
+                            "Newsreader"
+                    ],
+                    "display-xl": [
+                            "Newsreader"
+                    ],
+                    "body-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "headline-md": [
+                            "Newsreader"
+                    ],
+                    "label-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-lg": [
+                            "Plus Jakarta Sans"
+                    ]
+            },
+            "fontSize": {
+                    "subheading-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "letterSpacing": "0.08em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "display-xl": [
+                            "64px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "28px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-cream text-text-primary antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#FAF9F6] flex justify-between items-center w-full px-8 h-20 docked full-width top-0 border-b border-slate-900/10 flat no shadows sticky z-40">
+<button class="text-slate-800 hover:text-slate-900 transition-colors duration-300">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-serif italic tracking-tight text-3xl font-light text-slate-800">
+            Epicurean
+        </h1>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="elegant minimalist portrait of a woman in soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqBy9WE4uIRylfCse11pIziaS0y-tG1Gp6okprXzgK_nkoUnYfLM3N-Eq97-PgTIcrX63UI4F4Pt1tSvDvTjYwLCbgWoaFqqwN11yDCQ-zBcV99HZKDR8MmKE57txfJA7fvo6yzmZqsGRbpUXEPtyFmO8ntJ8QxJiQ6tCl9LqHKj8gx43KLshOc0srEvmM7SBkR_wx6i40qZQZWjgG2OhEsFXOqqHLFCCBVQfQuuMxEs4W0fMpIsQoLHzF1DoEkBo0i5WnGTn_z2aA"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="w-full max-w-lg mx-auto px-md py-xl flex flex-col gap-xxl">
+<!-- Item 1 -->
+<article class="flex flex-col gap-sm">
+<div class="w-full aspect-[4/5] rounded-img overflow-hidden relative">
+<img alt="Mediterranean Salad" class="w-full h-full object-cover object-center" data-alt="top down view of a fresh vibrant mediterranean salad in a shallow ceramic bowl with soft natural window lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVxxG9iLEjR-31HlGBdPpPYZLWQuJ7pH9sOz2p8Xporjoc8RobGCXi4srucEAXOgbnRejooozQJhYcoK_ghlJmrwKeBlUediCwl_NX_sqicQXavfxdf1pcibslxw0c1jm-ByX3PlfDTdbNzCddEalDpqlFLLGcb1yckgr4W8_7vKY-SR4PPvZ1PnGhaj5TPtJSOiopPQBBQ374uybxMablhXQd_kVRgkauwohPceY25-khfXemKG7rlQ_HmU1ekM3rDf3B9qRSqf7e"/>
+</div>
+<div class="px-xs pt-xs">
+<h2 class="font-headline-md text-headline-md text-text-primary">Mediterranean Salad</h2>
+<p class="font-body-md text-body-md text-text-muted mt-2">Crisp greens, heirloom tomatoes, and aged feta with a light citrus vinaigrette.</p>
+</div>
+</article>
+<!-- Item 2 (Highlighted) -->
+<article class="flex flex-col gap-sm bg-peach-tint/60 rounded-[24px] p-sm -mx-sm relative">
+<div class="absolute inset-0 bg-gradient-to-b from-peach-tint/40 to-transparent rounded-[24px] pointer-events-none"></div>
+<div class="w-full aspect-[4/5] rounded-img overflow-hidden relative z-10">
+<img alt="Wild Mushroom Risotto" class="w-full h-full object-cover object-center" data-alt="close-up of creamy wild mushroom risotto garnished with fresh herbs and parmesan shavings, warm inviting lighting, high-end restaurant presentation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvhuiHKNiEz_5SHA8DN9fbE4xZ4EELxQ0WAhA3q26cvYeLW8kewTX05gXt08w_ipgo2NNAH7L2A74g1LhYqOXIA8ruxIhCwiLP7ZStYUp4qgh2S9nldwl9LRj8NFb7Wjlt5QzP4vW2fD-beDVN23d37TOTfoK-Gk5_nbo8G2iURcvSYm5OuoK1-G6Aoqy0xKijJECS4s71YOMApFIIKdLl_oSYy7S1dHzMPMaU0qPyqsbPW26vRSaDSyWyEilUE8N86qySnq6_c9PQ"/>
+</div>
+<div class="px-xs pt-xs z-10">
+<h2 class="font-headline-md text-headline-md text-text-primary">Wild Mushroom Risotto</h2>
+<p class="font-body-md text-body-md text-text-muted mt-2">Arborio rice slowly simmered with porcini stock, finished with truffle oil.</p>
+</div>
+</article>
+<!-- Item 3 -->
+<article class="flex flex-col gap-sm">
+<div class="w-full aspect-[4/5] rounded-img overflow-hidden relative">
+<img alt="Roasted Peach Tart" class="w-full h-full object-cover object-center" data-alt="elegant slice of roasted peach tart with a flaky golden crust, served on a minimalist plate with a dollop of vanilla bean cream, soft directional daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe-WF6stiUqHI2bDxYiQHTofJn99bPIPY8h1AuPmJnZHbQ0ogHQeZ4QIj7WuOS9EoefEUTujeIgrBjZWM-Nc-AhdgbnpCojnEM7U2Iuh251vBOjuqu0NytsoLuyib4p2qNHi0ktQ3uYVF-qOUxmZiolqis2VeaDLxGs55VcHgUFyie349b-8UQS2Sg1b2u7ATHWtAiTF8BYOuidxUFXdCr3JIg87jRO5T3C9XwTqf_IfItszbCQ-9UzaWqH3vqAOVfdknpbRnAo-dF"/>
+</div>
+<div class="px-xs pt-xs">
+<h2 class="font-headline-md text-headline-md text-text-primary">Roasted Peach Tart</h2>
+<p class="font-body-md text-body-md text-text-muted mt-2">Caramelized late-summer peaches in a buttery galette crust.</p>
+</div>
+</article>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-8 bg-[#FAF9F6]/90 backdrop-blur-md docked full-width border-t border-slate-900/10 flat no shadows">
+<a class="flex flex-col items-center justify-center text-slate-900 bg-stone-200/40 rounded-xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-serif text-[10px] uppercase tracking-[0.2em] font-medium">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-4 py-2 hover:bg-stone-100 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-serif text-[10px] uppercase tracking-[0.2em] font-medium">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-4 py-2 hover:bg-stone-100 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">auto_stories</span>
+<span class="font-serif text-[10px] uppercase tracking-[0.2em] font-medium">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-4 py-2 hover:bg-stone-100 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-serif text-[10px] uppercase tracking-[0.2em] font-medium">Profile</span>
+</a>
+</nav>
+</body></html>

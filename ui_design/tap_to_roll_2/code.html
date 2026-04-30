@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Epicure - Randomize</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "secondary-fixed-dim": "#d8c2b5",
+                "primary-fixed-dim": "#e1bebe",
+                "surface-container": "#f4eceb",
+                "on-error-container": "#93000a",
+                "primary-container": "#f4d0d0",
+                "error": "#ba1a1a",
+                "surface-container-low": "#faf2f1",
+                "inverse-surface": "#33302f",
+                "surface-container-high": "#eee6e6",
+                "on-tertiary-container": "#715858",
+                "tertiary": "#715858",
+                "outline-variant": "#d3c3c2",
+                "surface-dim": "#e0d8d8",
+                "on-background": "#1e1b1b",
+                "on-error": "#ffffff",
+                "inverse-primary": "#e1bebe",
+                "on-surface-variant": "#4f4444",
+                "tertiary-container": "#f2d1d1",
+                "on-secondary-fixed-variant": "#53443a",
+                "tertiary-fixed-dim": "#dfbfbf",
+                "secondary": "#6c5b50",
+                "secondary-container": "#f5ded0",
+                "surface": "#fff8f7",
+                "background": "#fff8f7",
+                "tertiary-fixed": "#fddbda",
+                "primary-fixed": "#fedada",
+                "surface-tint": "#735858",
+                "surface-container-lowest": "#ffffff",
+                "surface-variant": "#e8e1e0",
+                "on-tertiary": "#ffffff",
+                "on-primary": "#ffffff",
+                "outline": "#817474",
+                "on-surface": "#1e1b1b",
+                "error-container": "#ffdad6",
+                "secondary-fixed": "#f5ded0",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed-variant": "#594041",
+                "on-tertiary-fixed-variant": "#584141",
+                "on-primary-fixed": "#2a1617",
+                "surface-container-highest": "#e8e1e0",
+                "on-secondary-container": "#726156",
+                "inverse-on-surface": "#f7efee",
+                "surface-bright": "#fff8f7",
+                "on-secondary-fixed": "#251911",
+                "primary": "#735858",
+                "on-tertiary-fixed": "#291717",
+                "on-primary-container": "#725758"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1.5rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "xs": "4px",
+                "sm": "12px",
+                "lg": "48px",
+                "gutter": "24px",
+                "md": "24px",
+                "base": "8px",
+                "container-margin": "32px",
+                "xl": "80px"
+        },
+        "fontFamily": {
+                "display-lg": ["Newsreader", "serif"],
+                "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+                "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                "display-md": ["Newsreader", "serif"],
+                "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+                "headline-md": ["Newsreader", "serif"],
+                "headline-lg": ["Newsreader", "serif"]
+        },
+        "fontSize": {
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "display-md": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "500"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+    body { background-color: #FCFCFA; }
+</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="antialiased flex flex-col h-[884px] overflow-hidden text-on-surface selection:bg-primary-container" style="background-color: #FCFCFA; min-height: 100dvh;">
+<!-- TopAppBar -->
+<header class="bg-[#FCFCFA] flex justify-between items-center w-full px-8 py-4 fixed top-0 z-40">
+<button aria-label="Menu" class="text-[#5A4D4D] opacity-90 active:scale-95 transition-transform hover:bg-[#FDF5F0] p-2 rounded-full -ml-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-serif italic text-2xl tracking-tight text-[#5A4D4D]">Epicure</h1>
+<button aria-label="User Profile" class="text-[#5A4D4D] opacity-90 active:scale-95 transition-transform hover:bg-[#FDF5F0] w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center px-container-margin pb-20">
+<!-- Interactive Element -->
+<button aria-label="Roll the dice" class="group flex flex-col items-center justify-center opacity-90 active:scale-[0.98] transition-all duration-500 ease-out focus:outline-none space-y-6">
+<!-- Minimalist Die -->
+<img alt="Three elegant pink 3D dice" class="w-64 h-64 md:w-80 md:h-80 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxGfob58SqD1D9S2h45x86FiA-_tEqmNRE75WJsdVi_lv6Bpg7y_c9E5eFZNjRLWFduxSD4PB74203wqX5Tlp4PAmURslJCSdWMsjQEFL9yw281Y1vE4JUqtaW0GLBJ-oRW3tbjJRv4TRiZpvTNwwlcIPnw0GQM4vYQ_ulEBTNEj4fVIV5OioxXRwEiwJew6KKmxzfDN1cXwe1KtxNJJT04crrOKamkfaAwNOI7xOVhsleIbMSFTa4d-pz5pra74rmqv7sW4rxo4Kd"/>
+<!-- Typography -->
+<h2 class="font-display-md text-display-md text-[#5A4D4D] opacity-90 group-hover:opacity-100 transition-opacity duration-300">Tap to roll</h2>
+</button>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-[#FCFCFA]/90 backdrop-blur-md fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 rounded-t-lg transition-colors duration-300 md:hidden">
+<button aria-label="Discover" class="flex flex-col items-center justify-center text-stone-400 scale-100 active:scale-90 transition-all duration-300 hover:text-[#F4D0D0] group">
+<span class="material-symbols-outlined mb-1 group-hover:animate-pulse" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-serif text-[11px] uppercase tracking-widest">Discover</span>
+</button>
+<button aria-label="Randomize" class="flex flex-col items-center justify-center text-[#5A4D4D] font-bold scale-100 active:scale-90 transition-all duration-300 hover:text-[#F4D0D0] group">
+<span class="material-symbols-outlined mb-1" data-icon="casino" data-weight="fill" style="font-variation-settings: 'FILL' 1;">casino</span>
+<span class="font-serif text-[11px] uppercase tracking-widest text-[#F4D0D0]">Randomize</span>
+</button>
+<button aria-label="Saved" class="flex flex-col items-center justify-center text-stone-400 scale-100 active:scale-90 transition-all duration-300 hover:text-[#F4D0D0] group">
+<span class="material-symbols-outlined mb-1" data-icon="bookmark">bookmark</span>
+<span class="font-serif text-[11px] uppercase tracking-widest">Saved</span>
+</button>
+<button aria-label="Journal" class="flex flex-col items-center justify-center text-stone-400 scale-100 active:scale-90 transition-all duration-300 hover:text-[#F4D0D0] group">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-serif text-[11px] uppercase tracking-widest">Journal</span>
+</button>
+</nav>
+</body></html>

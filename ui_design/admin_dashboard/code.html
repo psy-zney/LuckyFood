@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Culinary Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#eee6e6",
+                      "on-tertiary-container": "#715858",
+                      "on-secondary-container": "#726156",
+                      "primary-fixed": "#fedada",
+                      "on-surface-variant": "#4f4444",
+                      "surface-tint": "#735858",
+                      "outline": "#817474",
+                      "tertiary-container": "#f2d1d1",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#f4eceb",
+                      "inverse-surface": "#33302f",
+                      "tertiary-fixed": "#fddbda",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-highest": "#e8e1e0",
+                      "on-primary-fixed-variant": "#594041",
+                      "on-primary-fixed": "#2a1617",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#faf2f1",
+                      "primary-container": "#f4d0d0",
+                      "outline-variant": "#d3c3c2",
+                      "secondary-fixed": "#f5ded0",
+                      "inverse-on-surface": "#f7efee",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1e1b1b",
+                      "surface": "#fff8f7",
+                      "inverse-primary": "#e1bebe",
+                      "secondary-container": "#f5ded0",
+                      "primary-fixed-dim": "#e1bebe",
+                      "surface-variant": "#e8e1e0",
+                      "on-tertiary-fixed": "#291717",
+                      "on-secondary-fixed-variant": "#53443a",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-primary-container": "#725758",
+                      "tertiary": "#715858",
+                      "secondary-fixed-dim": "#d8c2b5",
+                      "on-tertiary-fixed-variant": "#584141",
+                      "background": "#fff8f7",
+                      "primary": "#735858",
+                      "on-background": "#1e1b1b",
+                      "surface-bright": "#fff8f7",
+                      "tertiary-fixed-dim": "#dfbfbf",
+                      "secondary": "#6c5b50",
+                      "on-secondary-fixed": "#251911",
+                      "surface-dim": "#e0d8d8",
+                      "on-primary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "xs": "4px",
+                      "lg": "48px",
+                      "gutter": "24px",
+                      "container-margin": "32px",
+                      "sm": "12px",
+                      "md": "24px",
+                      "xl": "80px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Newsreader"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Newsreader"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Newsreader"
+                      ],
+                      "display-md": [
+                              "Newsreader"
+                      ],
+                      "label-lg": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.03em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-md": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #FCFCFA; /* Overriding for specific user request, though theme is surface */
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface font-body-md min-h-screen flex">
+<!-- NavigationDrawer (Hidden on Mobile) -->
+<aside class="hidden md:flex fixed left-0 top-0 h-full z-40 flex-col p-6 w-72 border-r border-zinc-100 dark:border-zinc-800 bg-[#FCFCFA] dark:bg-zinc-950">
+<div class="mb-md">
+<span class="text-lg font-serif font-bold text-rose-400">Culinary Admin</span>
+</div>
+<div class="flex items-center gap-sm mb-lg">
+<img alt="Admin Avatar" class="w-12 h-12 rounded-full object-cover" data-alt="close up portrait of a smiling woman with glasses, soft natural light, professional headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzUIwyDaQP1Th59BWasATMV82t9ibIH8uj6ik23Boqp4WYFfYHxi0v-C1bF_1wn2g8pHQVSg9kHjTReka3USAB4yTkjPM_s-8IgrpQYtI7mWn5ZyH8IdmHuEZU6_tYi-uOaNDL1-IcW4It1h-5B7mQaRvNtL_rnOC_IS0SnFukevi9NyfzU053nCiQIKyIGEAvIPq9nAVl7YMJt66URMlaeLPOSnfq25OR_zWRdZeB4dztXKHPvcnjiEgJvLuJ3M8hh1bZnc82A1vL"/>
+<div>
+<p class="font-body-md font-medium text-zinc-800 dark:text-zinc-100">Head Curator</p>
+<p class="font-label-sm text-zinc-500">Admin Level 1</p>
+</div>
+</div>
+<nav class="flex flex-col gap-xs flex-grow">
+<a class="text-zinc-600 dark:text-zinc-400 px-4 py-3 hover:bg-[#FDF5F0] dark:hover:bg-zinc-900 transition-all duration-300 ease-in-out flex items-center gap-sm rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">monitoring</span>
+<span class="font-label-lg">Analytics</span>
+</a>
+<a class="text-zinc-600 dark:text-zinc-400 px-4 py-3 hover:bg-[#FDF5F0] dark:hover:bg-zinc-900 transition-all duration-300 ease-in-out flex items-center gap-sm rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-label-lg">User Management</span>
+</a>
+<a class="bg-[#F8E1D3] dark:bg-rose-900/20 text-rose-900 dark:text-rose-100 font-medium px-4 py-3 rounded-lg hover:bg-[#FDF5F0] dark:hover:bg-zinc-900 transition-all duration-300 ease-in-out flex items-center gap-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">restaurant_menu</span>
+<span class="font-label-lg">Food Database</span>
+</a>
+<a class="text-zinc-600 dark:text-zinc-400 px-4 py-3 hover:bg-[#FDF5F0] dark:hover:bg-zinc-900 transition-all duration-300 ease-in-out flex items-center gap-sm rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-lg">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col md:ml-72 min-h-screen">
+<!-- TopAppBar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-8 py-4 docked full-width top-0 bg-[#FCFCFA] dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-800 transition-colors duration-200 z-30 sticky">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-rose-300 dark:text-rose-400">menu</span>
+<h1 class="font-serif text-zinc-900 dark:text-zinc-50 font-headline-md">Culinary Admin</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="font-label-lg text-zinc-500">Admin Profile</span>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="close up portrait of a smiling woman with glasses, soft natural light, professional headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDnNfVI3flz-AlzBdpZMlSgL-bbRN3ATwns_Zg6n1xrwf8S995GvC_ncM75WRmIhGegTbLPZO4EfrWup9-OAMiDShbiu6w0Pvct_rcnHAGiPjcJcjRWykhuAjLCRjOkguKnzHpdpqloC4NRsD2LNaT3qVCUVvaMtzLftn5oHUcnD_IU4pi7R9v1q_7wpFK1Mgm4S9Sd-QHfqhBy9-Oipa7TwYePyc3UkROX3jp_KIHkl5HgmKLqpjECZ2kZJD0ISp_Mjmc5XuGyZw4"/>
+</div>
+</header>
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-container-margin py-4 top-0 bg-[#FCFCFA] dark:bg-zinc-950 sticky z-30">
+<h1 class="text-xl font-serif italic text-rose-400">Culinary Admin</h1>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover" data-alt="close up portrait of a smiling woman with glasses, soft natural light, professional headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk37E6fsNGD-3uQU2LfNg3inFCA6SBfVTTOGfEkG0_FqFDmA3ZAf5HSHVnUxJC1J9sMY6RS0_ctRPfuDogSnxbgqnRcdR90okNHiwW-ImdKOcdq-cJr0xoTrZ1ZTlumdK-uWbrOjuHSyM6dfjACSHFt8gC-7L3bYa6vcQV4JyFtf__00rakzJCSTzsTnE1qO0ikV-s9jeA1VXm3Uc7B05iSoMYbJlzVAkmiMZaUMJ6KySrg1hnav5XjVtrFiNgFWzrXb7fviG8Psjq"/>
+</header>
+<div class="p-container-margin md:p-lg flex-grow flex flex-col gap-xl max-w-5xl mx-auto w-full">
+<!-- Top Section: Summary Card -->
+<section>
+<div class="bg-surface-container-low rounded-xl p-lg flex flex-col gap-md relative overflow-hidden">
+<div class="absolute -right-8 -top-8 w-48 h-48 bg-primary-container rounded-full blur-3xl opacity-20"></div>
+<div class="flex items-center gap-sm text-primary">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">group</span>
+<h2 class="font-label-lg uppercase tracking-wider text-on-surface-variant">Total Users</h2>
+</div>
+<div>
+<span class="font-display-lg font-headline-lg text-on-surface">12,450</span>
+<span class="font-body-md text-on-surface-variant ml-sm">+4.2% this week</span>
+</div>
+</div>
+</section>
+<!-- Middle Section: Food Database -->
+<section class="flex flex-col gap-lg pb-xl">
+<header class="flex justify-between items-end border-b border-surface-dim pb-sm">
+<h2 class="font-headline-lg font-display-md text-on-surface">Food Database</h2>
+<button class="font-label-lg text-primary hover:text-surface-tint transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">add</span> Add Item
+                    </button>
+</header>
+<div class="flex flex-col">
+<!-- List Item 1 -->
+<div class="flex items-center justify-between py-md border-b border-[#F0EEE9] group hover:bg-[#FDF5F0]/50 transition-colors px-sm -mx-sm rounded-lg">
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Heirloom Tomato Galette" class="w-full h-full object-cover" data-alt="overhead shot of a rustic heirloom tomato galette on parchment paper, warm natural lighting, minimalist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa1Dpm69NFEY7Gy7hyMCR4S1gXg_-FuEW8O6oQGSwfhHwzdNmVBk6hFJ6Sx9eYWVV1ZvutknOv-ndqj40hNge1nNoG2I4COhIeakaX4mWV2pDXWX3EiaVAOIE9yC5q0cxF8DkLSANMcdJOe5J1ZOatPSsQlkKWB7CFT5cV2A6RwBQaUkQ2w875sX6cWJ8P-LNMvE3l7K3S-EHhHks399x_atGPeTgYjRS2JVme8Q-lzEtpnM_tZKYMkZQmA8KlXskyg5SHjQaK5tTt"/>
+</div>
+<div class="flex flex-col gap-xs">
+<h3 class="font-body-lg text-on-surface font-medium">Heirloom Tomato Galette</h3>
+<span class="font-label-sm text-on-surface-variant bg-secondary-container px-2 py-1 rounded-full w-fit">Pastry</span>
+</div>
+</div>
+<div class="flex items-center gap-sm opacity-0 group-hover:opacity-100 transition-opacity md:opacity-100">
+<button aria-label="Edit" class="w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="flex items-center justify-between py-md border-b border-[#F0EEE9] group hover:bg-[#FDF5F0]/50 transition-colors px-sm -mx-sm rounded-lg">
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Sourdough Bread" class="w-full h-full object-cover" data-alt="close up of artisan rustic sourdough bread loaf on a dark wooden board, dramatic side lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAs0-OUJ035jO3QhK89cYTdkFUlO8ZAtZgJlrCH9QVwtlz6NgJZhi5sqAeVdfH0b5_eermWRL0MbY7dCRFjy1ESJ3t2JsZ2-nvkBKz4mCQg3gpLvbGngyBGogyDk1M10LXd5gEQlTpu6cd9lmNEzbdvMPz7yug45gznO7mY8VI3JIHMktHU1_Acw8ZZ8ec4FhQ9MnIAyN6lyl4eM_40QctikLwFYJ5LAmo3iu9YHsCbphE_pgGSOAXlLWbH6SL52cxT5ZiEe75Ck_B9"/>
+</div>
+<div class="flex flex-col gap-xs">
+<h3 class="font-body-lg text-on-surface font-medium">Sourdough Bread</h3>
+<span class="font-label-sm text-on-surface-variant bg-secondary-container px-2 py-1 rounded-full w-fit">Baking</span>
+</div>
+</div>
+<div class="flex items-center gap-sm opacity-0 group-hover:opacity-100 transition-opacity md:opacity-100">
+<button aria-label="Edit" class="w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="flex items-center justify-between py-md border-b border-[#F0EEE9] group hover:bg-[#FDF5F0]/50 transition-colors px-sm -mx-sm rounded-lg">
+<div class="flex items-center gap-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Burrata Salad" class="w-full h-full object-cover" data-alt="fresh burrata salad with cherry tomatoes and basil on a light ceramic plate, bright natural overhead light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDviDCnAq9BzyrkEC1F2AOGXr5q1OCYNyvl80gvUGUOXFQJNpNu6yrzQYX4Y6hlFG-uwjo6YeSPHKTl0tbipw9lApt88NcoobH8lMlKNp2wkDzZMg7y_U-C4CLWaspQAFHXeerXcLzkGi0xHRfQT0FgdBSbuqxFgLxsSUEgklCSJDfp4g1s62A33dYJfuRNH8fOvFELHHmM2mcqwB-b5muxpjo6Wijr0JKAVQYY17BM8TyYFs9CAD4hH5w7BONPHFE9pdb8QEDiap48"/>
+</div>
+<div class="flex flex-col gap-xs">
+<h3 class="font-body-lg text-on-surface font-medium">Burrata Salad</h3>
+<span class="font-label-sm text-on-surface-variant bg-secondary-container px-2 py-1 rounded-full w-fit">Appetizer</span>
+</div>
+</div>
+<div class="flex items-center gap-sm opacity-0 group-hover:opacity-100 transition-opacity md:opacity-100">
+<button aria-label="Edit" class="w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button aria-label="Delete" class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-[#FCFCFA] dark:bg-zinc-950 pb-safe">
+<a class="flex flex-col items-center text-zinc-400 hover:text-rose-300 scale-95 duration-150 gap-xs" href="#">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<span class="font-serif text-[11px] tracking-wide uppercase">Stats</span>
+</a>
+<a class="flex flex-col items-center text-rose-400 font-bold hover:text-rose-300 scale-95 duration-150 gap-xs" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">database</span>
+<span class="font-serif text-[11px] tracking-wide uppercase">Database</span>
+</a>
+<a class="flex flex-col items-center text-zinc-400 hover:text-rose-300 scale-95 duration-150 gap-xs" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="font-serif text-[11px] tracking-wide uppercase">Account</span>
+</a>
+</nav>
+</body></html>
