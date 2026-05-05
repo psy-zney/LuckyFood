@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../navigation/AppNavigator';
 import { theme } from '../utils/theme';
@@ -18,6 +19,10 @@ export default function FilterScreen({ navigation }: Props) {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const { addFavourite, removeFavourite, favourites } = useAppStore();
+
+  // Animation values
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideUpAnim = React.useRef(new Animated.Value(20)).current;
 
   const toggleIngredient = (id: string) => {
     setSelectedIds(prev => {
@@ -59,44 +64,97 @@ export default function FilterScreen({ navigation }: Props) {
       const rows = await db.getAllAsync<FoodItem & { matched_count: number; total_ingredients: number }>(sql, idList);
       setResults(rows);
       setSearched(true);
+
+      // Animate results
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideUpAnim, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
     } catch (err) {
       console.error('[Filter] Error:', err);
     } finally {
       setLoading(false);
     }
-  }, [selectedIds]);
+  }, [selectedIds, fadeAnim, slideUpAnim]);
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'com': return theme.colors.primaryContainer;
+      case 'bun-pho': return theme.colors.secondaryContainer;
+      case 'banh': return theme.colors.tertiaryContainer;
+      case 'chay': return '#E8F5E9';
+      case 'nuoc': return '#E3F2FD';
+      default: return theme.colors.surfaceVariant;
+    }
+  };
+
+  const getCategoryTextColor = (category: string) => {
+    switch (category) {
+      case 'com': return theme.colors.primary;
+      case 'bun-pho': return theme.colors.secondary;
+      case 'banh': return theme.colors.tertiary;
+      case 'chay': return '#2E7D32';
+      case 'nuoc': return '#1565C0';
+      default: return theme.colors.text;
+    }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'com': return 'Cơm';
+      case 'bun-pho': return 'Bún/Phở';
+      case 'banh': return 'Bánh';
+      case 'chay': return 'Chay';
+      case 'nuoc': return 'Nước';
+      default: return category;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background} />
+
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Tìm Theo Nguyên Liệu</Text>
+        <Text style={styles.headerSubtitle}>Chọn những gì bạn có trong tủ lạnh</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.subTitle}>Đánh dấu những gì bạn đang có trong tủ lạnh:</Text>
-
         {/* Ingredient Grid */}
-        <View style={styles.ingredientGrid}>
-          {MOCK_INGREDIENTS.map(ing => {
-            const selected = selectedIds.has(ing.id);
-            return (
-              <TouchableOpacity
-                key={ing.id}
-                style={[styles.ingredientChip, selected && styles.ingredientChipSelected]}
-                onPress={() => toggleIngredient(ing.id)}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.ingredientIcon}>{ing.icon}</Text>
-                <Text style={[styles.ingredientName, selected && styles.ingredientNameSelected]}>
-                  {ing.name}
-                </Text>
-                {selected && (
-                  <MaterialIcons name="check" size={14} color={theme.colors.surface} />
-                )}
-              </TouchableOpacity>
-            );
-          })}
+        <View style={styles.ingredientSection}>
+          <Text style={styles.sectionTitle}>Chọn nguyên liệu</Text>
+          <View style={styles.ingredientGrid}>
+            {MOCK_INGREDIENTS.map(ing => {
+              const selected = selectedIds.has(ing.id);
+              return (
+                <TouchableOpacity
+                  key={ing.id}
+                  style={[styles.ingredientChip, selected && styles.ingredientChipSelected]}
+                  onPress={() => toggleIngredient(ing.id)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.ingredientIcon}>{ing.icon}</Text>
+                  <Text style={[styles.ingredientName, selected && styles.ingredientNameSelected]}>
+                    {ing.name}
+                  </Text>
+                  {selected && (
+                    <View style={styles.checkIcon}>
+                      <MaterialIcons name="check" size={14} color={theme.colors.surface} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
 
         {/* Search Button */}
@@ -111,42 +169,71 @@ export default function FilterScreen({ navigation }: Props) {
           ) : (
             <>
               <MaterialIcons name="search" size={22} color={theme.colors.surface} />
-              <Text style={styles.searchBtnText}>Tìm Món Phù Hợp ({selectedIds.size} nguyên liệu)</Text>
+              <Text style={styles.searchBtnText}>
+                Tìm Món Phù Hợp ({selectedIds.size} nguyên liệu)
+              </Text>
             </>
           )}
         </TouchableOpacity>
 
         {/* Results */}
         {searched && (
-          <View style={styles.resultsSection}>
-            <Text style={styles.resultsTitle}>
-              {results.length > 0
-                ? `Tìm thấy ${results.length} món (≥ 70% nguyên liệu)`
-                : 'Không tìm thấy món phù hợp'}
-            </Text>
-            {results.map((item, idx) => (
-              <View key={item.id}>
-                <View style={styles.resultRow}>
-                  <View style={styles.resultInfo}>
-                    <Text style={styles.resultName}>{item.name}</Text>
-                    <Text style={styles.resultDesc} numberOfLines={2}>{item.description}</Text>
-                    <View style={styles.metaRow}>
-                      <MaterialIcons name="schedule" size={14} color={theme.colors.textSecondary} />
-                      <Text style={styles.metaText}>{item.prepTime} phút</Text>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideUpAnim }],
+            }}
+          >
+            <View style={styles.resultsSection}>
+              <Text style={styles.resultsTitle}>
+                {results.length > 0
+                  ? `Tìm thấy ${results.length} món (≥ 70% nguyên liệu)`
+                  : 'Không tìm thấy món phù hợp'}
+              </Text>
+              {results.map((item, idx) => (
+                <View key={item.id}>
+                  <TouchableOpacity
+                    style={styles.resultRow}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      // Navigate to detail screen (implement later)
+                      console.log('Navigate to:', item.id);
+                    }}
+                  >
+                    <View style={styles.resultInfo}>
+                      <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
+                        <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
+                          {getCategoryLabel(item.category)}
+                        </Text>
+                      </View>
+                      <Text style={styles.resultName}>{item.name}</Text>
+                      <Text style={styles.resultDesc} numberOfLines={2}>
+                        {item.description}
+                      </Text>
+                      <View style={styles.metaRow}>
+                        <View style={styles.metaItem}>
+                          <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
+                          <Text style={styles.metaText}>{item.prepTime} phút</Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                  <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavourite(item)}>
-                    <MaterialIcons
-                      name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
-                      size={24}
-                      color={isFavourite(item.id) ? theme.colors.tertiary : theme.colors.textSecondary}
-                    />
+                    <TouchableOpacity
+                      style={styles.favBtn}
+                      onPress={() => toggleFavourite(item)}
+                      activeOpacity={0.7}
+                    >
+                      <MaterialIcons
+                        name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
+                        size={28}
+                        color={isFavourite(item.id) ? theme.colors.tertiary : theme.colors.textSecondary}
+                      />
+                    </TouchableOpacity>
                   </TouchableOpacity>
+                  {idx < results.length - 1 && <View style={styles.separator} />}
                 </View>
-                {idx < results.length - 1 && <View style={styles.separator} />}
-              </View>
-            ))}
-          </View>
+              ))}
+            </View>
+          </Animated.View>
         )}
 
         <View style={{ height: 100 }} />
@@ -156,46 +243,170 @@ export default function FilterScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.colors.background },
-  header: {
-    flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.md,
+  safeArea: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  headerTitle: { fontFamily: theme.typography.families.display, fontSize: 20, fontWeight: theme.typography.weights.semiBold, color: theme.colors.text },
-  content: { paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.sm },
-  subTitle: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.md, color: theme.colors.textSecondary, marginBottom: theme.spacing.lg, lineHeight: 22 },
-  ingredientGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm, marginBottom: theme.spacing.xl },
+  header: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.lg,
+    backgroundColor: theme.colors.background,
+  },
+  headerTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
+    letterSpacing: -0.5,
+  },
+  headerSubtitle: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.textSecondary,
+  },
+  content: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
+  },
+  ingredientSection: {
+    marginBottom: theme.spacing.xl,
+  },
+  sectionTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.semiBold,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.md,
+  },
+  ingredientGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
+  },
   ingredientChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: theme.spacing.md, paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 12,
     backgroundColor: theme.colors.surfaceVariant,
-    borderRadius: theme.borderRadius.round,
-    borderWidth: 1.5, borderColor: 'transparent',
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
   ingredientChipSelected: {
     backgroundColor: theme.colors.primaryContainer,
     borderColor: theme.colors.primary,
   },
-  ingredientIcon: { fontSize: 16 },
-  ingredientName: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.sm, color: theme.colors.textSecondary, fontWeight: theme.typography.weights.medium },
-  ingredientNameSelected: { color: theme.colors.surface },
+  ingredientIcon: {
+    fontSize: 18,
+  },
+  ingredientName: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.weights.medium,
+  },
+  ingredientNameSelected: {
+    color: theme.colors.surface,
+  },
+  checkIcon: {
+    marginLeft: 4,
+  },
   searchBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm,
-    backgroundColor: theme.colors.primaryContainer, paddingVertical: 18,
-    borderRadius: theme.borderRadius.lg, marginBottom: theme.spacing.xl,
-    shadowColor: theme.colors.primaryContainer, shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 6 },
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing.sm,
+    backgroundColor: theme.colors.primaryContainer,
+    paddingVertical: 18,
+    borderRadius: theme.borderRadius.xl,
+    marginBottom: theme.spacing.xl,
+    shadowColor: theme.colors.primaryContainer,
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
     elevation: 8,
   },
-  searchBtnDisabled: { opacity: 0.4 },
-  searchBtnText: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.md, fontWeight: theme.typography.weights.bold, color: theme.colors.surface, letterSpacing: 0.5 },
-  resultsSection: { marginTop: theme.spacing.sm },
-  resultsTitle: { fontFamily: theme.typography.families.display, fontSize: theme.typography.sizes.xl, color: theme.colors.text, marginBottom: theme.spacing.lg },
-  resultRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: theme.spacing.md, gap: theme.spacing.md },
-  resultInfo: { flex: 1 },
-  resultName: { fontFamily: theme.typography.families.display, fontSize: theme.typography.sizes.lg, color: theme.colors.text, marginBottom: 4 },
-  resultDesc: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.sm, color: theme.colors.textSecondary, marginBottom: 6, lineHeight: 20 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.xs, color: theme.colors.textSecondary },
-  favBtn: { padding: theme.spacing.sm },
-  separator: { height: 1, backgroundColor: theme.colors.borderSubtle, marginVertical: 4 },
+  searchBtnDisabled: {
+    opacity: 0.4,
+  },
+  searchBtnText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.surface,
+    letterSpacing: 0.3,
+  },
+  resultsSection: {
+    marginTop: theme.spacing.sm,
+  },
+  resultsTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.xl,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.lg,
+    fontWeight: theme.typography.weights.semiBold,
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: theme.spacing.md,
+    gap: theme.spacing.md,
+  },
+  resultInfo: {
+    flex: 1,
+  },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.round,
+    marginBottom: theme.spacing.xs,
+  },
+  categoryText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  resultName: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.lg,
+    color: theme.colors.text,
+    marginBottom: 4,
+    fontWeight: theme.typography.weights.semiBold,
+  },
+  resultDesc: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.textSecondary,
+  },
+  favBtn: {
+    padding: theme.spacing.sm,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: theme.colors.borderSubtle,
+    marginVertical: 4,
+  },
 });

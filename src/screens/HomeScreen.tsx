@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../navigation/AppNavigator';
 import { theme } from '../utils/theme';
@@ -13,81 +14,178 @@ type Props = {
 export default function HomeScreen({ navigation }: Props) {
   const { current, highest } = useStreak();
 
+  // Animation values
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideUpAnim = React.useRef(new Animated.Value(30)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideUpAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const streakPercentage = Math.min((current / 7) * 100, 100);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background} />
-      
+
       {/* TopAppBar */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Search')}
+          activeOpacity={0.7}
+        >
           <MaterialIcons name="search" size={24} color={theme.colors.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>LuckyFood</Text>
-        <TouchableOpacity style={styles.avatarContainer} onPress={() => navigation.navigate('Favourites')}>
-          <MaterialIcons name="favorite-border" size={28} color={theme.colors.textSecondary} />
+        <View style={styles.logoContainer}>
+          <MaterialIcons name="restaurant" size={24} color={theme.colors.primary} />
+          <Text style={styles.headerTitle}>LuckyFood</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate('Favourites')}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons name="favorite-border" size={24} color={theme.colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        
-        {/* Daily Cooking Streak */}
-        <View style={styles.section}>
-          <View style={styles.streakHeader}>
-            <MaterialIcons name="local-fire-department" size={24} color={theme.colors.tertiary} />
-            <Text style={styles.sectionTitle}>Chuỗi Nấu Ăn</Text>
-          </View>
-          <View style={styles.streakProgressContainer}>
-            <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: `${Math.min((current / 7) * 100, 100)}%` }]} />
-            </View>
-            <Text style={styles.streakText}>Ngày {current} / 7</Text>
-          </View>
-        </View>
-
-        {/* What to eat today? (Random Wheel) – Ô màu nổi bật theo RULES.md */}
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => navigation.navigate('RandomWheel')}
-          style={styles.randomSection}
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateY: slideUpAnim }],
+          }}
         >
-          <View style={styles.randomInner}>
-            <View style={styles.randomTextBlock}>
-              <Text style={styles.randomEyebrow}>HÔM NAY ĂN GÌ?</Text>
-              <Text style={styles.randomTitle}>Để số phận{`\n`}quyết định</Text>
-              <View style={styles.randomCta}>
-                <MaterialIcons name="casino" size={18} color={theme.colors.surface} />
-                <Text style={styles.randomCtaText}>Đổ Xúc Xắc</Text>
+          {/* Welcome Section */}
+          <View style={styles.welcomeSection}>
+            <Text style={styles.welcomeText}>Chào mừng trở lại!</Text>
+            <Text style={styles.welcomeSubtext}>Hôm nay bạn muốn ăn gì?</Text>
+          </View>
+
+          {/* Daily Cooking Streak */}
+          <View style={styles.streakCard}>
+            <View style={styles.streakHeader}>
+              <View style={styles.streakIcon}>
+                <MaterialIcons name="local-fire-department" size={24} color={theme.colors.surface} />
+              </View>
+              <View style={styles.streakInfo}>
+                <Text style={styles.streakTitle}>Chuỗi Nấu Ăn</Text>
+                <Text style={styles.streakSubtitle}>Cao nhất: {highest} ngày</Text>
               </View>
             </View>
-            <Image
-              source={require('../assets/images/xuc_xac-removebg-preview.png')}
-              style={styles.randomDicePreview}
-              resizeMode="contain"
-            />
+            <View style={styles.streakProgress}>
+              <View style={styles.progressBarBg}>
+                <View style={[styles.progressBarFill, { width: `${streakPercentage}%` }]} />
+              </View>
+              <Text style={styles.streakText}>Ngày {current} / 7</Text>
+            </View>
           </View>
-        </TouchableOpacity>
 
-        {/* Find recipes by ingredients (Filter) */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.displayTitle}>Theo nguyên liệu</Text>
-            <TouchableOpacity style={styles.viewAllBtn} onPress={() => navigation.navigate('Filter')}>
-              <Text style={styles.viewAllText}>Xem tất cả</Text>
-              <MaterialIcons name="arrow-forward" size={18} color={theme.colors.primary} />
+          {/* What to eat today? (Random Wheel) */}
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('RandomWheel')}
+            style={styles.randomSection}
+          >
+            <View style={styles.randomInner}>
+              <View style={styles.randomTextBlock}>
+                <View style={styles.randomBadge}>
+                  <MaterialIcons name="auto-awesome" size={16} color={theme.colors.surface} />
+                  <Text style={styles.randomBadgeText}>Nổi bật</Text>
+                </View>
+                <Text style={styles.randomEyebrow}>HÔM NAY ĂN GÌ?</Text>
+                <Text style={styles.randomTitle}>Để số phận{`\n`}quyết định</Text>
+                <View style={styles.randomCta}>
+                  <MaterialIcons name="casino" size={18} color={theme.colors.surface} />
+                  <Text style={styles.randomCtaText}>Đổ Xúc Xắc</Text>
+                </View>
+              </View>
+              <Image
+                source={require('../assets/images/xuc_xac-removebg-preview.png')}
+                style={styles.randomDicePreview}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Find recipes by ingredients (Filter) */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.displayTitle}>Theo nguyên liệu</Text>
+              <TouchableOpacity
+                style={styles.viewAllBtn}
+                onPress={() => navigation.navigate('Filter')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.viewAllText}>Xem tất cả</Text>
+                <MaterialIcons name="arrow-forward" size={18} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.searchBarFake}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('Filter')}
+            >
+              <MaterialIcons name="tune" size={22} color={theme.colors.textSecondary} />
+              <Text style={styles.searchPlaceholder}>Tủ lạnh đang có gì?</Text>
+              <MaterialIcons name="chevron-right" size={20} color={theme.colors.textSecondary} />
             </TouchableOpacity>
           </View>
-          
-          <TouchableOpacity 
-            style={styles.searchBarFake}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('Filter')}
-          >
-            <MaterialIcons name="tune" size={22} color={theme.colors.textSecondary} />
-            <Text style={styles.searchPlaceholder}>Tủ lạnh đang có gì?</Text>
-            <MaterialIcons name="chevron-right" size={20} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
-        </View>
-        
+
+          {/* Quick Actions */}
+          <View style={styles.quickActions}>
+            <TouchableOpacity
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('Search')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.quickActionIcon}>
+                <MaterialIcons name="search" size={24} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.quickActionText}>Tìm món</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('Favourites')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.quickActionIcon}>
+                <MaterialIcons name="favorite" size={24} color={theme.colors.tertiary} />
+              </View>
+              <Text style={styles.quickActionText}>Yêu thích</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('Filter')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.quickActionIcon}>
+                <MaterialIcons name="category" size={24} color={theme.colors.secondary} />
+              </View>
+              <Text style={styles.quickActionText}>Nguyên liệu</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+
         <View style={{ height: 100 }} />
       </ScrollView>
     </SafeAreaView>
@@ -95,30 +193,131 @@ export default function HomeScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.colors.background },
-  container: { flex: 1 },
-  header: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.background, zIndex: 10,
+  safeArea: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
   },
-  iconButton: { padding: 8, marginLeft: -8, borderRadius: theme.borderRadius.round },
-  headerTitle: { fontFamily: theme.typography.families.display, fontSize: theme.typography.sizes.xl, fontStyle: 'italic', fontWeight: theme.typography.weights.bold, color: theme.colors.text },
-  avatarContainer: { width: 40, height: 40, borderRadius: theme.borderRadius.round, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  avatar: { width: '100%', height: '100%' },
-  content: { paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.md },
-  section: { marginBottom: theme.spacing.xl },
-  streakHeader: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginBottom: theme.spacing.sm },
-  sectionTitle: { fontFamily: theme.typography.families.display, fontSize: theme.typography.sizes.xl, color: theme.colors.text },
-  streakProgressContainer: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, width: '60%' },
-  progressBarBg: { flex: 1, height: 2, backgroundColor: theme.colors.surfaceVariant, position: 'relative' },
-  progressBarFill: { position: 'absolute', left: 0, top: 0, height: '100%', backgroundColor: theme.colors.primaryContainer },
-  streakText: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.xs, color: '#817474', textTransform: 'uppercase', letterSpacing: 1 },
-  sectionHeaderRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: theme.spacing.lg },
-  displayTitle: { fontFamily: theme.typography.families.display, fontSize: theme.typography.sizes.xxl, color: theme.colors.text },
-  viewAllBtn: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs },
-  viewAllText: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.sm, color: theme.colors.primary, fontWeight: theme.typography.weights.semiBold },
-  // Random Section Highlight (RULES.md: Dùng màu nổi bật, tránh dùng primary cho nền lớn → dùng secondaryContainer)
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderSubtle,
+  },
+  iconButton: {
+    padding: theme.spacing.sm,
+    borderRadius: theme.borderRadius.round,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  headerTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.xl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+    letterSpacing: -0.5,
+  },
+  content: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+  },
+
+  // Welcome Section
+  welcomeSection: {
+    marginBottom: theme.spacing.xl,
+  },
+  welcomeText: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
+    letterSpacing: -0.5,
+  },
+  welcomeSubtext: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.textSecondary,
+    lineHeight: 24,
+  },
+
+  // Streak Card
+  streakCard: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
+    borderWidth: 1,
+    borderColor: theme.colors.borderSubtle,
+    shadowColor: theme.colors.text,
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  streakHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+  },
+  streakIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.tertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  streakInfo: {
+    flex: 1,
+  },
+  streakTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.semiBold,
+    color: theme.colors.text,
+    marginBottom: 2,
+  },
+  streakSubtitle: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+  },
+  streakProgress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.md,
+  },
+  progressBarBg: {
+    flex: 1,
+    height: 8,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: theme.colors.tertiary,
+    borderRadius: 4,
+  },
+  streakText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.weights.medium,
+  },
+
+  // Random Section
   randomSection: {
     marginBottom: theme.spacing.xl,
     borderRadius: theme.borderRadius.xl,
@@ -130,13 +329,149 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
   },
-  randomInner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.xl },
-  randomTextBlock: { flex: 1, gap: theme.spacing.sm },
-  randomEyebrow: { fontFamily: theme.typography.families.body, fontSize: 10, letterSpacing: 2, color: '#726156', textTransform: 'uppercase' },
-  randomTitle: { fontFamily: theme.typography.families.display, fontSize: 28, lineHeight: 32, color: '#3D2C1C' },
-  randomCta: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#5A4033', paddingHorizontal: theme.spacing.md, paddingVertical: 10, borderRadius: theme.borderRadius.lg, alignSelf: 'flex-start', marginTop: theme.spacing.sm },
-  randomCtaText: { fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.sm, fontWeight: theme.typography.weights.bold, color: theme.colors.surface },
-  randomDicePreview: { width: 120, height: 120, marginLeft: theme.spacing.md },
-  searchBarFake: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: theme.spacing.md, backgroundColor: theme.colors.surfaceVariant, borderRadius: theme.borderRadius.lg },
-  searchPlaceholder: { flex: 1, fontFamily: theme.typography.families.body, fontSize: theme.typography.sizes.md, color: theme.colors.textSecondary },
+  randomInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.xl,
+  },
+  randomTextBlock: {
+    flex: 1,
+    gap: theme.spacing.sm,
+  },
+  randomBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: theme.colors.secondary,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 4,
+    borderRadius: theme.borderRadius.round,
+    alignSelf: 'flex-start',
+  },
+  randomBadgeText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.surface,
+    fontWeight: theme.typography.weights.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  randomEyebrow: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.xs,
+    letterSpacing: 2,
+    color: theme.colors.secondary,
+    textTransform: 'uppercase',
+    fontWeight: theme.typography.weights.medium,
+  },
+  randomTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: 28,
+    lineHeight: 32,
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.bold,
+    letterSpacing: -0.5,
+  },
+  randomCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 12,
+    borderRadius: theme.borderRadius.lg,
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing.sm,
+    shadowColor: theme.colors.primary,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  randomCtaText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.surface,
+    letterSpacing: 0.3,
+  },
+  randomDicePreview: {
+    width: 120,
+    height: 120,
+    marginLeft: theme.spacing.md,
+  },
+
+  // Section
+  section: {
+    marginBottom: theme.spacing.xl,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.lg,
+  },
+  displayTitle: {
+    fontFamily: theme.typography.families.display,
+    fontSize: theme.typography.sizes.xxl,
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.bold,
+    letterSpacing: -0.5,
+  },
+  viewAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  viewAllText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.primary,
+    fontWeight: theme.typography.weights.semiBold,
+  },
+  searchBarFake: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surfaceVariant,
+    borderRadius: theme.borderRadius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.borderSubtle,
+  },
+  searchPlaceholder: {
+    flex: 1,
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.textSecondary,
+  },
+
+  // Quick Actions
+  quickActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: theme.spacing.md,
+  },
+  quickActionItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+  },
+  quickActionIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: theme.colors.surfaceVariant,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.borderSubtle,
+  },
+  quickActionText: {
+    fontFamily: theme.typography.families.body,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.medium,
+  },
 });
