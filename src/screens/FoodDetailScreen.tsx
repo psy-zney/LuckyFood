@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Dimensions,
   Share,
   Alert,
+  Easing,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../utils/ThemeProvider';
@@ -36,9 +37,37 @@ export default function FoodDetailScreen({ route, navigation }: Props) {
 
   const [isFavourite, setIsFavourite] = useState(false);
 
+  // Animation values
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const contentAnim = useRef(new Animated.Value(0)).current;
+  const favScale = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     setIsFavourite(favourites.some(f => f.id === food.id));
   }, [favourites, food.id]);
+
+  // Content fade-in animation
+  useEffect(() => {
+    Animated.timing(contentAnim, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  // Parallax effect for image
+  const imageScale = scrollY.interpolate({
+    inputRange: [-200, 0],
+    outputRange: [1.2, 1],
+    extrapolate: 'clamp',
+  });
+
+  const imageOpacity = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
 
   const toggleFavourite = () => {
     if (isFavourite) {
@@ -48,6 +77,22 @@ export default function FoodDetailScreen({ route, navigation }: Props) {
       addFavourite(food);
       setIsFavourite(true);
     }
+
+    // Heart animation
+    Animated.sequence([
+      Animated.spring(favScale, {
+        toValue: 1.3,
+        tension: 200,
+        friction: 5,
+        useNativeDriver: true,
+      }),
+      Animated.spring(favScale, {
+        toValue: 1,
+        tension: 200,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   const handleShare = async () => {
@@ -86,34 +131,57 @@ export default function FoodDetailScreen({ route, navigation }: Props) {
           >
             <MaterialIcons name="share" size={24} color={theme.colors.textSecondary} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.favButton}
-            onPress={toggleFavourite}
-            activeOpacity={0.7}
-          >
-            <MaterialIcons
-              name={isFavourite ? 'favorite' : 'favorite-border'}
-              size={28}
-              color={isFavourite ? theme.colors.heart : theme.colors.textSecondary}
-            />
-          </TouchableOpacity>
+          <Animated.View style={{ transform: [{ scale: favScale }] }}>
+            <TouchableOpacity
+              style={styles.favButton}
+              onPress={toggleFavourite}
+              activeOpacity={0.7}
+            >
+              <MaterialIcons
+                name={isFavourite ? 'favorite' : 'favorite-border'}
+                size={28}
+                color={isFavourite ? theme.colors.heart : theme.colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
       >
-        {/* Food Image */}
-        <View style={styles.imageContainer}>
+        {/* Food Image with Parallax */}
+        <Animated.View
+          style={[
+            styles.imageContainer,
+            {
+              opacity: imageOpacity,
+              transform: [{ scale: imageScale }],
+            },
+          ]}
+        >
           <View style={styles.imagePlaceholder}>
             <MaterialIcons name="restaurant" size={64} color={theme.colors.textSecondary} />
           </View>
-        </View>
+        </Animated.View>
 
-        {/* Food Info */}
-        <View style={styles.foodInfo}>
+        {/* Food Info with Staggered Fade-in */}
+        <Animated.View
+          style={[
+            styles.foodInfo,
+            {
+              opacity: contentAnim,
+              transform: [{ translateY: contentAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
+            },
+          ]}
+        >
           {/* Category Badge */}
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{getCategoryLabel(food.category)}</Text>
@@ -190,13 +258,10 @@ export default function FoodDetailScreen({ route, navigation }: Props) {
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </Animated.View>
+      </Animated.ScrollView>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-      </View>
+
 
       {/* Bottom Action */}
       <View style={styles.bottomAction}>

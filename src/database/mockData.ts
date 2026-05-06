@@ -17,6 +17,7 @@ export interface IngredientItem {
   id: string;
   name: string;
   icon: string; // emoji
+  type: 'main' | 'common' | 'rare';
 }
 
 export interface FoodIngredientLink {
@@ -26,20 +27,29 @@ export interface FoodIngredientLink {
 
 // ─── Nguyên liệu phổ biến ────────────────────────────────────────────────────
 export const MOCK_INGREDIENTS: IngredientItem[] = [
-  { id: 'ing-1', name: 'Thịt heo', icon: '🥩' },
-  { id: 'ing-2', name: 'Thịt bò', icon: '🥩' },
-  { id: 'ing-3', name: 'Thịt gà', icon: '🍗' },
-  { id: 'ing-4', name: 'Trứng', icon: '🥚' },
-  { id: 'ing-5', name: 'Tôm', icon: '🍤' },
-  { id: 'ing-6', name: 'Cá', icon: '🐟' },
-  { id: 'ing-7', name: 'Rau xanh', icon: '🥬' },
-  { id: 'ing-8', name: 'Cà rốt', icon: '🥕' },
-  { id: 'ing-9', name: 'Khoai tây', icon: '🥔' },
-  { id: 'ing-10', name: 'Nấm', icon: '🍄' },
-  { id: 'ing-11', name: 'Đậu hũ', icon: '🫘' },
-  { id: 'ing-12', name: 'Bún / Phở', icon: '🍜' },
-  { id: 'ing-13', name: 'Cơm', icon: '🍚' },
-  { id: 'ing-14', name: 'Mì', icon: '🍝' },
+  // Main
+  { id: 'ing-1', name: 'Thịt heo', icon: '🥩', type: 'main' },
+  { id: 'ing-2', name: 'Thịt bò', icon: '🥩', type: 'main' },
+  { id: 'ing-3', name: 'Thịt gà', icon: '🍗', type: 'main' },
+  { id: 'ing-4', name: 'Trứng', icon: '🥚', type: 'main' },
+  { id: 'ing-5', name: 'Tôm', icon: '🍤', type: 'main' },
+  { id: 'ing-6', name: 'Cá', icon: '🐟', type: 'main' },
+  { id: 'ing-11', name: 'Đậu hũ', icon: '🫘', type: 'main' },
+  { id: 'ing-12', name: 'Bún / Phở', icon: '🍜', type: 'main' },
+  { id: 'ing-13', name: 'Cơm', icon: '🍚', type: 'main' },
+  { id: 'ing-14', name: 'Mì', icon: '🍝', type: 'main' },
+
+  // Rare
+  { id: 'ing-7', name: 'Rau xanh', icon: '🥬', type: 'rare' },
+  { id: 'ing-8', name: 'Cà rốt', icon: '🥕', type: 'rare' },
+  { id: 'ing-9', name: 'Khoai tây', icon: '🥔', type: 'rare' },
+  { id: 'ing-10', name: 'Nấm', icon: '🍄', type: 'rare' },
+
+  // Common (Gia vị)
+  { id: 'ing-15', name: 'Tỏi', icon: '🧄', type: 'common' },
+  { id: 'ing-16', name: 'Hành', icon: '🧅', type: 'common' },
+  { id: 'ing-17', name: 'Gừng', icon: '🫚', type: 'common' },
+  { id: 'ing-18', name: 'Ớt', icon: '🌶️', type: 'common' },
 ];
 
 // ─── Danh sách Món Ăn ────────────────────────────────────────────────────────
@@ -132,9 +142,13 @@ export const MOCK_FOOD_INGREDIENTS: FoodIngredientLink[] = [
   { food_id: 'food-1', ingredient_id: 'ing-1' },
   { food_id: 'food-1', ingredient_id: 'ing-13' },
   { food_id: 'food-1', ingredient_id: 'ing-4' },
+  { food_id: 'food-1', ingredient_id: 'ing-15' }, // Tỏi
+  { food_id: 'food-1', ingredient_id: 'ing-18' }, // Ớt
   // Phở bò
   { food_id: 'food-2', ingredient_id: 'ing-2' },
   { food_id: 'food-2', ingredient_id: 'ing-12' },
+  { food_id: 'food-2', ingredient_id: 'ing-16' }, // Hành
+  { food_id: 'food-2', ingredient_id: 'ing-17' }, // Gừng
   // Bún bò Huế
   { food_id: 'food-3', ingredient_id: 'ing-2' },
   { food_id: 'food-3', ingredient_id: 'ing-1' },

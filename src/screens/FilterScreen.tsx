@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getDb } from '../database/db-service';
+import { getDb, getFoodsByIngredients } from '../database/db-service';
 import { FoodItem, MOCK_INGREDIENTS } from '../database/mockData';
 import { useAppStore } from '../store';
 
@@ -16,7 +16,8 @@ type Props = {
 
 export default function FilterScreen({ navigation }: Props) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [results, setResults] = useState<FoodItem[]>([]);
+  const [readyToCook, setReadyToCook] = useState<any[]>([]);
+  const [needToBuy, setNeedToBuy] = useState<any[]>([]);
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const { addFavourite, removeFavourite, favourites } = useAppStore();
@@ -46,25 +47,18 @@ export default function FilterScreen({ navigation }: Props) {
     if (selectedIds.size === 0) return;
     setLoading(true);
     try {
-      const db = await getDb();
       const idList = Array.from(selectedIds);
-      const placeholders = idList.map(() => '?').join(',');
-      const totalSelected = idList.length;
+      // Call the optimized B-Tree indexing query from db-service
+      const rows = await getFoodsByIngredients(idList);
+      
+      // Món nấu được ngay: KHÔNG THIẾU nguyên liệu quan trọng (main, rare)
+      const ready = rows.filter(r => r.missing_critical_count === 0);
+      
+      // Món cần mua thêm: Có thiếu nguyên liệu quan trọng
+      const partial = rows.filter(r => r.missing_critical_count > 0);
 
-      // Count how many selected ingredients each food has
-      const sql = `
-        SELECT f.*, COUNT(fi.ingredient_id) AS matched_count,
-          (SELECT COUNT(*) FROM FoodIngredients WHERE food_id = f.id) AS total_ingredients
-        FROM Foods f
-        INNER JOIN FoodIngredients fi ON fi.food_id = f.id
-        WHERE fi.ingredient_id IN (${placeholders})
-        GROUP BY f.id
-        HAVING (CAST(matched_count AS REAL) / CAST(total_ingredients AS REAL)) >= 0.7
-        ORDER BY matched_count DESC
-      `;
-
-      const rows = await db.getAllAsync<FoodItem & { matched_count: number; total_ingredients: number }>(sql, idList);
-      setResults(rows);
+      setReadyToCook(ready);
+      setNeedToBuy(partial);
       setSearched(true);
 
       // Animate results
@@ -188,63 +182,110 @@ export default function FilterScreen({ navigation }: Props) {
               transform: [{ translateY: slideUpAnim }],
             }}
           >
-            <View style={styles.resultsSection}>
-              <Text style={styles.resultsTitle}>
-                {results.length > 0
-                  ? `Tìm thấy ${results.length} món (≥ 70% nguyên liệu)`
-                  : 'Không tìm thấy món phù hợp'}
-              </Text>
-              {results.map((item, idx) => (
-                <View key={item.id}>
-                  <TouchableOpacity
-                    style={styles.resultRow}
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
-                    }}
-                  >
-                    <View style={styles.resultInfo}>
-                      <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
-                        <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
-                          {getCategoryLabel(item.category)}
-                        </Text>
-                      </View>
-                      <Text style={styles.resultName}>{item.name}</Text>
-                      <Text style={styles.resultDesc} numberOfLines={2}>
-                        {item.description}
-                      </Text>
-                      <View style={styles.metaRow}>
-                        <View style={styles.metaItem}>
-                          <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
-                          <Text style={styles.metaText}>{item.prepTime} phút</Text>
+            {readyToCook.length === 0 && needToBuy.length === 0 && (
+              <View style={styles.resultsSection}>
+                <Text style={styles.resultsTitle}>Không tìm thấy món phù hợp</Text>
+              </View>
+            )}
+
+            {/* Nấu Được Ngay */}
+            {readyToCook.length > 0 && (
+              <View style={styles.resultsSection}>
+                <View style={styles.sectionHeaderRow}>
+                  <Text style={styles.resultsTitle}>Nấu Được Ngay</Text>
+                  <View style={[styles.badge, { backgroundColor: theme.colors.success }]}>
+                    <Text style={styles.badgeText}>Khớp 100%</Text>
+                  </View>
+                </View>
+                <Text style={styles.sectionSubtitle}>Bạn đã có đủ nguyên liệu để nấu các món này</Text>
+                
+                {readyToCook.map((item, idx) => (
+                  <View key={item.id}>
+                    <TouchableOpacity
+                      style={styles.resultRow}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
+                      }}
+                    >
+                      <View style={styles.resultInfo}>
+                        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
+                          <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
+                            {getCategoryLabel(item.category)}
+                          </Text>
+                        </View>
+                        <Text style={styles.resultName}>{item.name}</Text>
+                        <Text style={styles.resultDesc} numberOfLines={2}>{item.description}</Text>
+                        <View style={styles.metaRow}>
+                          <View style={styles.metaItem}>
+                            <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
+                            <Text style={styles.metaText}>{item.prepTime} phút</Text>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.favBtn}
-                      onPress={() => toggleFavourite(item)}
-                      activeOpacity={0.7}
-                    >
-                      <MaterialIcons
-                        name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
-                        size={28}
-                        color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary}
-                      />
+                      <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavourite(item)} activeOpacity={0.7}>
+                        <MaterialIcons name={isFavourite(item.id) ? 'favorite' : 'favorite-border'} size={28} color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary} />
+                      </TouchableOpacity>
                     </TouchableOpacity>
-                  </TouchableOpacity>
-                  {idx < results.length - 1 && <View style={styles.separator} />}
+                    {idx < readyToCook.length - 1 && <View style={styles.separator} />}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Gợi Ý Thêm */}
+            {needToBuy.length > 0 && (
+              <View style={[styles.resultsSection, { marginTop: theme.spacing.lg }]}>
+                <View style={styles.sectionHeaderRow}>
+                  <Text style={styles.resultsTitle}>Gợi Ý Mua Thêm</Text>
+                  <View style={[styles.badge, { backgroundColor: theme.colors.warning }]}>
+                    <Text style={[styles.badgeText, { color: '#000' }]}>Thiếu nguyên liệu</Text>
+                  </View>
                 </View>
-              ))}
-            </View>
+                <Text style={styles.sectionSubtitle}>Các món này có chứa nguyên liệu bạn chọn</Text>
+                
+                {needToBuy.map((item, idx) => (
+                  <View key={item.id}>
+                    <TouchableOpacity
+                      style={styles.resultRow}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
+                      }}
+                    >
+                      <View style={styles.resultInfo}>
+                        <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
+                          <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
+                            {getCategoryLabel(item.category)}
+                          </Text>
+                        </View>
+                        <Text style={styles.resultName}>{item.name}</Text>
+                        <Text style={styles.resultDesc} numberOfLines={2}>
+                          Thiếu: {item.missing_critical_count} nguyên liệu chính
+                        </Text>
+                        <View style={styles.metaRow}>
+                          <View style={styles.metaItem}>
+                            <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
+                            <Text style={styles.metaText}>{item.prepTime} phút</Text>
+                          </View>
+                        </View>
+                      </View>
+                      <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavourite(item)} activeOpacity={0.7}>
+                        <MaterialIcons name={isFavourite(item.id) ? 'favorite' : 'favorite-border'} size={28} color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary} />
+                      </TouchableOpacity>
+                    </TouchableOpacity>
+                    {idx < needToBuy.length - 1 && <View style={styles.separator} />}
+                  </View>
+                ))}
+              </View>
+            )}
+
           </Animated.View>
         )}
 
         <View style={{ height: 100 }} />
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -403,7 +444,7 @@ const createStyles = (theme: any) =>
     },
     metaText: {
       fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
+      fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
     },
     favBtn: {
@@ -412,7 +453,32 @@ const createStyles = (theme: any) =>
     separator: {
       height: 1,
       backgroundColor: theme.colors.borderSubtle,
-      marginVertical: 4,
+      marginLeft: theme.spacing.xl,
+    },
+    sectionHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      marginBottom: 4,
+    },
+    badge: {
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: theme.borderRadius.round,
+    },
+    badgeText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: 10,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.surface,
+      textTransform: 'uppercase',
+    },
+    sectionSubtitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.md,
+      fontStyle: 'italic',
     },
     footer: {
       alignItems: 'center',

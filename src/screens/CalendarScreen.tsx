@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -16,6 +17,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStore } from '../store';
 import { FoodItem } from '../database/mockData';
 import { getDb } from '../database/db-service';
+import { FadeIn, SlideUp, ScaleIn, StaggerIn, Bounce, Pulse } from '../components/animations';
 
 type Props = {
   navigation: BottomTabNavigationProp<RootTabParamList>;
@@ -38,6 +40,12 @@ export default function CalendarScreen({ navigation }: Props) {
   const [mealEntries, setMealEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [mealDates, setMealDates] = useState<string[]>([]);
+
+  // Animation values
+  const monthSlideAnim = useRef(new Animated.Value(0)).current;
+  const dayScaleAnim = useRef(new Animated.Value(1)).current;
+  const mealCardAnim = useRef(new Animated.Value(0)).current;
+  const statsAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadMealDates();
@@ -134,11 +142,42 @@ export default function CalendarScreen({ navigation }: Props) {
       newDate.setMonth(newDate.getMonth() + 1);
     }
     setCurrentDate(newDate);
+
+    // Animate the transition
+    const toValue = direction === 'next' ? -1 : 1;
+    Animated.sequence([
+      Animated.timing(monthSlideAnim, {
+        toValue,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(monthSlideAnim, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   const selectDate = (day: number) => {
     const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     setSelectedDate(newDate);
+
+    // Animate day selection
+    Animated.sequence([
+      Animated.spring(dayScaleAnim, {
+        toValue: 1.2,
+        tension: 200,
+        friction: 5,
+        useNativeDriver: true,
+      }),
+      Animated.spring(dayScaleAnim, {
+        toValue: 1,
+        tension: 200,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   const formatDate = (date: Date) => {
@@ -195,9 +234,27 @@ export default function CalendarScreen({ navigation }: Props) {
           >
             <MaterialIcons name="chevron-left" size={24} color={theme.colors.text} />
           </TouchableOpacity>
-          <Text style={styles.monthTitle}>
+          <Animated.Text
+            style={[
+              styles.monthTitle,
+              {
+                opacity: monthSlideAnim.interpolate({
+                  inputRange: [-1, 0, 1],
+                  outputRange: [0, 1, 0],
+                }),
+                transform: [
+                  {
+                    translateX: monthSlideAnim.interpolate({
+                      inputRange: [-1, 0, 1],
+                      outputRange: [50, 0, -50],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
             {currentDate.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
-          </Text>
+          </Animated.Text>
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => navigateMonth('next')}
@@ -239,35 +296,48 @@ export default function CalendarScreen({ navigation }: Props) {
                   onPress={() => selectDate(day)}
                   activeOpacity={0.7}
                 >
-                  <Text
-                    style={[
-                      styles.dayText,
-                      selected && styles.dayTextSelected,
-                      today && styles.dayTextToday,
-                    ]}
+                  <Animated.View
+                    style={{
+                      transform: [
+                        {
+                          scale: dayScaleAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [1, 1],
+                          }),
+                        },
+                      ],
+                    }}
                   >
-                    {day}
-                  </Text>
-                  {/* Meal Images - Stacked like Locket */}
-                  {dayMeals.length > 0 && (
-                    <View style={styles.mealImagesContainer}>
-                      {dayMeals.slice(0, 3).map((entry, idx) => (
-                        <View
-                          key={entry.foodId}
-                          style={[
-                            styles.mealImageDot,
-                            { backgroundColor: getMealTypeColor(entry.mealType) },
-                            idx > 0 && styles.mealImageDotStacked,
-                          ]}
-                        />
-                      ))}
-                      {dayMeals.length > 3 && (
-                        <View style={styles.mealImageMore}>
-                          <Text style={styles.mealImageMoreText}>+{dayMeals.length - 3}</Text>
-                        </View>
-                      )}
-                    </View>
-                  )}
+                    <Text
+                      style={[
+                        styles.dayText,
+                        selected && styles.dayTextSelected,
+                        today && styles.dayTextToday,
+                      ]}
+                    >
+                      {day}
+                    </Text>
+                    {/* Meal Images - Stacked like Locket */}
+                    {dayMeals.length > 0 && (
+                      <View style={styles.mealImagesContainer}>
+                        {dayMeals.slice(0, 3).map((entry, idx) => (
+                          <View
+                            key={entry.foodId}
+                            style={[
+                              styles.mealImageDot,
+                              { backgroundColor: getMealTypeColor(entry.mealType) },
+                              idx > 0 && styles.mealImageDotStacked,
+                            ]}
+                          />
+                        ))}
+                        {dayMeals.length > 3 && (
+                          <View style={styles.mealImageMore}>
+                            <Text style={styles.mealImageMoreText}>+{dayMeals.length - 3}</Text>
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </Animated.View>
                 </TouchableOpacity>
               );
             })}
@@ -287,38 +357,40 @@ export default function CalendarScreen({ navigation }: Props) {
             </View>
           ) : meals.length > 0 ? (
             <View style={styles.mealsList}>
-              {meals.map((food) => {
+              {meals.map((food, index) => {
                 const entry = mealEntries.find(e => e.foodId === food.id);
                 return (
-                  <View key={food.id} style={styles.mealCard}>
-                    <View style={styles.mealCardHeader}>
-                      <View style={styles.mealTypeBadge}>
-                        <MaterialIcons
-                          name={getMealTypeIcon(entry?.mealType) as any}
-                          size={16}
-                          color={theme.colors.surface}
-                        />
-                        <Text style={styles.mealTypeText}>{getMealTypeLabel(entry?.mealType)}</Text>
+                  <StaggerIn key={food.id} delay={index * 100} duration={300}>
+                    <View style={styles.mealCard}>
+                      <View style={styles.mealCardHeader}>
+                        <View style={styles.mealTypeBadge}>
+                          <MaterialIcons
+                            name={getMealTypeIcon(entry?.mealType) as any}
+                            size={16}
+                            color={theme.colors.surface}
+                          />
+                          <Text style={styles.mealTypeText}>{getMealTypeLabel(entry?.mealType)}</Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.removeMealBtn}
+                          onPress={() => {
+                            const dateStr = selectedDate.toISOString().split('T')[0];
+                            removeMeal(dateStr, food.id);
+                            loadMealsForDate(selectedDate);
+                            loadMealDates();
+                          }}
+                          activeOpacity={0.7}
+                        >
+                          <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
+                        </TouchableOpacity>
                       </View>
-                      <TouchableOpacity
-                        style={styles.removeMealBtn}
-                        onPress={() => {
-                          const dateStr = selectedDate.toISOString().split('T')[0];
-                          removeMeal(dateStr, food.id);
-                          loadMealsForDate(selectedDate);
-                          loadMealDates();
-                        }}
-                        activeOpacity={0.7}
-                      >
-                        <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
-                      </TouchableOpacity>
+                      <Text style={styles.mealName}>{food.name}</Text>
+                      <View style={styles.mealMeta}>
+                        <MaterialIcons name="schedule" size={14} color={theme.colors.textSecondary} />
+                        <Text style={styles.mealMetaText}>{food.prepTime} phút</Text>
+                      </View>
                     </View>
-                    <Text style={styles.mealName}>{food.name}</Text>
-                    <View style={styles.mealMeta}>
-                      <MaterialIcons name="schedule" size={14} color={theme.colors.textSecondary} />
-                      <Text style={styles.mealMetaText}>{food.prepTime} phút</Text>
-                    </View>
-                  </View>
+                  </StaggerIn>
                 );
               })}
             </View>
@@ -335,23 +407,24 @@ export default function CalendarScreen({ navigation }: Props) {
         <View style={styles.statsSection}>
           <Text style={styles.statsTitle}>Thống kê tháng này</Text>
           <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <MaterialIcons name="restaurant" size={24} color={theme.colors.primary} />
-              <Text style={styles.statValue}>{mealDates.length}</Text>
-              <Text style={styles.statLabel}>Ngày có ăn</Text>
-            </View>
-            <View style={styles.statCard}>
-              <MaterialIcons name="local-fire-department" size={24} color={theme.colors.secondary} />
-              <Text style={styles.statValue}>{meals.length}</Text>
-              <Text style={styles.statLabel}>Tổng món</Text>
-            </View>
+            <ScaleIn delay={0} duration={400}>
+              <View style={styles.statCard}>
+                <MaterialIcons name="restaurant" size={24} color={theme.colors.primary} />
+                <Text style={styles.statValue}>{mealDates.length}</Text>
+                <Text style={styles.statLabel}>Ngày có ăn</Text>
+              </View>
+            </ScaleIn>
+            <ScaleIn delay={100} duration={400}>
+              <View style={styles.statCard}>
+                <MaterialIcons name="local-fire-department" size={24} color={theme.colors.secondary} />
+                <Text style={styles.statValue}>{meals.length}</Text>
+                <Text style={styles.statLabel}>Tổng món</Text>
+              </View>
+            </ScaleIn>
           </View>
         </View>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );

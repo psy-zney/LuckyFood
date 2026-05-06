@@ -417,10 +417,7 @@ export default function RandomWheelScreen({ navigation }: Props) {
         )}
       </View>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-      </View>
+
     </SafeAreaView>
   );
 }

@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Animated } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Animated, Modal, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
@@ -12,7 +13,10 @@ import { FoodItem } from '../database/mockData';
 import { getDb } from '../database/db-service';
 
 type Props = {
-  navigation: BottomTabNavigationProp<RootTabParamList>;
+  navigation: CompositeNavigationProp<
+    BottomTabNavigationProp<RootTabParamList, 'Home'>,
+    NativeStackNavigationProp<RootStackParamList>
+  >;
 };
 
 export default function HomeScreen({ navigation }: Props) {
@@ -21,33 +25,83 @@ export default function HomeScreen({ navigation }: Props) {
   const { isAuthenticated } = useAuth();
   const { getTopFoods } = useAppStore();
   const [topFoods, setTopFoods] = React.useState<FoodItem[]>([]);
+  const [dailyFoods, setDailyFoods] = React.useState<FoodItem[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
 
-  // Animation values
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const slideUpAnim = React.useRef(new Animated.Value(30)).current;
+  // Animation values - Staggered entry
+  const headerAnim = React.useRef(new Animated.Value(0)).current;
+  const welcomeAnim = React.useRef(new Animated.Value(0)).current;
+  const streakAnim = React.useRef(new Animated.Value(0)).current;
+  const sectionsAnim = React.useRef(new Animated.Value(0)).current;
+  const progressAnim = React.useRef(new Animated.Value(0)).current;
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
+  const scrollX = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+    // Staggered entry animation
+    Animated.sequence([
+      Animated.timing(headerAnim, {
         toValue: 1,
-        duration: 600,
+        duration: 300,
         useNativeDriver: true,
       }),
-      Animated.timing(slideUpAnim, {
-        toValue: 0,
-        duration: 600,
+      Animated.timing(welcomeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.spring(streakAnim, {
+        toValue: 1,
+        tension: 100,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(sectionsAnim, {
+        toValue: 1,
+        duration: 400,
         useNativeDriver: true,
       }),
     ]).start();
 
+    // Animate progress bar
+    Animated.timing(progressAnim, {
+      toValue: streakPercentage,
+      duration: 1000,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: false,
+    }).start();
+
+    // Pulse animation for random section
+    const pulseLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.05,
+          duration: 1500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulseLoop.start();
+
     // Load top foods
     loadTopFoods();
+
+    return () => pulseLoop.stop();
   }, []);
 
   const loadTopFoods = async () => {
     try {
       const db = await getDb();
       const topFoodIds = getTopFoods(5);
+      
+      // Load top foods based on popularity
       if (topFoodIds.length > 0) {
         const placeholders = topFoodIds.map(() => '?').join(',');
         const foods = await db.getAllAsync<FoodItem>(
@@ -55,13 +109,28 @@ export default function HomeScreen({ navigation }: Props) {
           topFoodIds
         );
         setTopFoods(foods);
+      } else {
+        // Fallback: Just get first 5 items if no popularity data exists yet
+        const foods = await db.getAllAsync<FoodItem>('SELECT * FROM foods LIMIT 5');
+        setTopFoods(foods);
       }
+
+      // Load daily recommendations (5 random items)
+      const daily = await db.getAllAsync<FoodItem>('SELECT * FROM foods ORDER BY RANDOM() LIMIT 5');
+      setDailyFoods(daily);
+      
     } catch (error) {
       console.error('Error loading top foods:', error);
     }
   };
 
   const streakPercentage = Math.min((current / 7) * 100, 100);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['0%', '100%'],
+    extrapolate: 'clamp',
+  });
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -82,31 +151,41 @@ export default function HomeScreen({ navigation }: Props) {
 
       {/* TopAppBar */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => navigation.navigate('Search')}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="search" size={24} color={theme.colors.primary} />
-        </TouchableOpacity>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="menu" size={24} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+          <View style={styles.streakBadge}>
+            <MaterialIcons name="local-fire-department" size={20} color={theme.colors.primary} />
+            <Text style={styles.streakBadgeText}>{current}</Text>
+          </View>
+        </View>
+
         <View style={styles.logoContainer}>
           <MaterialIcons name="restaurant" size={24} color={theme.colors.primary} />
           <Text style={styles.headerTitle}>LuckyFood</Text>
         </View>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => navigation.navigate('Calendar')}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="calendar-month" size={24} color={theme.colors.textSecondary} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => navigation.navigate('Profile')}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="menu" size={24} color={theme.colors.textSecondary} />
-        </TouchableOpacity>
+
+        <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => navigation.navigate('Search')}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="search" size={24} color={theme.colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.iconButton, { marginLeft: 4 }]}
+            onPress={() => navigation.navigate('Calendar')}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="calendar-month" size={24} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -114,19 +193,26 @@ export default function HomeScreen({ navigation }: Props) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        {/* Welcome Section */}
         <Animated.View
           style={{
-            opacity: fadeAnim,
-            transform: [{ translateY: slideUpAnim }],
+            opacity: welcomeAnim,
+            transform: [{ translateY: welcomeAnim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
           }}
         >
-          {/* Welcome Section */}
           <View style={styles.welcomeSection}>
             <Text style={styles.welcomeText}>Chào mừng trở lại! 💕</Text>
             <Text style={styles.welcomeSubtext}>Hôm nay bạn muốn ăn gì?</Text>
           </View>
+        </Animated.View>
 
-          {/* Daily Cooking Streak */}
+        {/* Daily Cooking Streak */}
+        <Animated.View
+          style={{
+            opacity: streakAnim,
+            transform: [{ scale: streakAnim }],
+          }}
+        >
           <View style={styles.streakCard}>
             <View style={styles.streakHeader}>
               <View style={styles.streakIcon}>
@@ -139,47 +225,94 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
             <View style={styles.streakProgress}>
               <View style={styles.progressBarBg}>
-                <View style={[styles.progressBarFill, { width: `${streakPercentage}%` }]} />
+                <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
               </View>
               <Text style={styles.streakText}>Ngày {current} / 7</Text>
             </View>
           </View>
+        </Animated.View>
 
-          {/* What to eat today? (Random Wheel) */}
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => navigation.navigate('RandomWheel')}
-            style={styles.randomSection}
+        {/* Top Picks - Most Popular */}
+        {topFoods.length > 0 && (
+          <Animated.View
+            style={{
+              opacity: sectionsAnim,
+              transform: [{ translateY: sectionsAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
+            }}
           >
-            <View style={styles.randomInner}>
-              <View style={styles.randomTextBlock}>
-                <View style={styles.randomBadge}>
-                  <MaterialIcons name="favorite" size={16} color={theme.colors.surface} />
-                  <Text style={styles.randomBadgeText}>Nổi bật</Text>
-                </View>
-                <Text style={styles.randomEyebrow}>HÔM NAY ĂN GÌ?</Text>
-                <Text style={styles.randomTitle}>Để số phận{`\n`}quyết định</Text>
-                <View style={styles.randomCta}>
-                  <MaterialIcons name="casino" size={18} color={theme.colors.surface} />
-                  <Text style={styles.randomCtaText}>Đổ Xúc Xắc</Text>
-                </View>
-              </View>
-              <Image
-                source={require('../assets/images/xuc_xac-removebg-preview.png')}
-                style={styles.randomDicePreview}
-                resizeMode="contain"
-              />
-            </View>
-          </TouchableOpacity>
-
-          {/* Top Picks - Most Popular */}
-          {topFoods.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeaderRow}>
-                <Text style={styles.displayTitle}>Top Đề Xuất</Text>
+                <Text style={styles.displayTitle}>Top Phổ Biến</Text>
                 <View style={styles.topBadge}>
                   <MaterialIcons name="trending-up" size={16} color={theme.colors.surface} />
-                  <Text style={styles.topBadgeText}>Phổ biến</Text>
+                  <Text style={styles.topBadgeText}>Nổi bật</Text>
+                </View>
+              </View>
+
+              <Animated.ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.topPicksScroll}
+                scrollEventThrottle={16}
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                  { useNativeDriver: true }
+                )}
+              >
+                {topFoods.map((food, index) => {
+                  const inputRange = [
+                    (index - 1) * 150,
+                    index * 150,
+                    (index + 1) * 150,
+                  ];
+                  const scale = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [0.9, 1, 0.9],
+                    extrapolate: 'clamp',
+                  });
+
+                  return (
+                    <Animated.View key={`top-${food.id}`} style={{ transform: [{ scale }] }}>
+                      <TouchableOpacity
+                        style={styles.topPickCard}
+                        onPress={() => {
+                          (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food });
+                        }}
+                        activeOpacity={0.7}
+                      >
+                        <View style={[styles.topPickImagePlaceholder, { backgroundColor: getCategoryColor(food.category) }]}>
+                          <MaterialIcons name="restaurant" size={32} color="rgba(255,255,255,0.8)" />
+                        </View>
+                        <View style={styles.topPickInfo}>
+                          <Text style={styles.topPickName} numberOfLines={1}>{food.name}</Text>
+                          <View style={styles.topPickMeta}>
+                            <MaterialIcons name="schedule" size={12} color={theme.colors.textSecondary} />
+                            <Text style={styles.topPickMetaText}>{food.prepTime} phút</Text>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </Animated.View>
+                  );
+                })}
+              </Animated.ScrollView>
+            </View>
+          </Animated.View>
+        )}
+
+        {/* Daily Recommendations */}
+        {dailyFoods.length > 0 && (
+          <Animated.View
+            style={{
+              opacity: sectionsAnim,
+              transform: [{ translateY: sectionsAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
+            }}
+          >
+            <View style={styles.section}>
+              <View style={styles.sectionHeaderRow}>
+                <Text style={styles.displayTitle}>Gợi Ý Hôm Nay</Text>
+                <View style={[styles.topBadge, { backgroundColor: theme.colors.secondary }]}>
+                  <MaterialIcons name="star" size={16} color={theme.colors.surface} />
+                  <Text style={styles.topBadgeText}>Hôm nay</Text>
                 </View>
               </View>
 
@@ -188,9 +321,9 @@ export default function HomeScreen({ navigation }: Props) {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.topPicksScroll}
               >
-                {topFoods.map((food) => (
+                {dailyFoods.map((food) => (
                   <TouchableOpacity
-                    key={food.id}
+                    key={`daily-${food.id}`}
                     style={styles.topPickCard}
                     onPress={() => {
                       (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food });
@@ -211,9 +344,50 @@ export default function HomeScreen({ navigation }: Props) {
                 ))}
               </ScrollView>
             </View>
-          )}
+          </Animated.View>
+        )}
 
-          {/* Find recipes by ingredients (Filter) */}
+        {/* What to eat today? (Random Wheel) */}
+        <Animated.View
+          style={{
+            opacity: sectionsAnim,
+            transform: [{ scale: pulseAnim }],
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('RandomWheel')}
+            style={styles.randomSection}
+          >
+            <View style={styles.randomInner}>
+              <View style={styles.randomTextBlock}>
+                <View style={[styles.randomBadge, { backgroundColor: theme.colors.tertiary }]}>
+                  <MaterialIcons name="casino" size={16} color={theme.colors.surface} />
+                  <Text style={styles.randomBadgeText}>Xúc xắc</Text>
+                </View>
+                <Text style={styles.randomEyebrow}>HÔM NAY ĂN GÌ?</Text>
+                <Text style={styles.randomTitle}>Để số phận{`\n`}quyết định</Text>
+                <View style={styles.randomCta}>
+                  <MaterialIcons name="play-arrow" size={18} color={theme.colors.surface} />
+                  <Text style={styles.randomCtaText}>Quay ngay</Text>
+                </View>
+              </View>
+              <Image
+                source={require('../assets/images/xuc_xac-removebg-preview.png')}
+                style={styles.randomDicePreview}
+                resizeMode="contain"
+              />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* Find recipes by ingredients (Filter) */}
+        <Animated.View
+          style={{
+            opacity: sectionsAnim,
+            transform: [{ translateY: sectionsAnim.interpolate({ inputRange: [0, 1], outputRange: [30, 0] }) }],
+          }}
+        >
           <View style={styles.section}>
             <View style={styles.sectionHeaderRow}>
               <Text style={styles.displayTitle}>Theo nguyên liệu</Text>
@@ -275,10 +449,7 @@ export default function HomeScreen({ navigation }: Props) {
           </View>
         </Animated.View>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -295,13 +466,40 @@ const createStyles = (theme: any) =>
     },
     header: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: theme.spacing.lg,
+      paddingLeft: theme.spacing.md,
+      paddingRight: theme.spacing.sm, // Dịch qua phải 1 chút (thay vì lg)
       paddingVertical: theme.spacing.sm,
       backgroundColor: theme.colors.background,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.borderSubtle,
+    },
+    headerLeft: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    streakBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 2,
+      marginLeft: 4,
+      backgroundColor: theme.colors.surfaceVariant,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.round,
+    },
+    streakBadgeText: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.primary,
+    },
+    headerRight: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
     },
     iconButton: {
       padding: theme.spacing.sm,
@@ -310,6 +508,7 @@ const createStyles = (theme: any) =>
     logoContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
       gap: theme.spacing.xs,
     },
     headerTitle: {

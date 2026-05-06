@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, StatusBar, ActivityIndicator, Animated } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, StatusBar, ActivityIndicator, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -18,11 +18,38 @@ export default function SearchScreen({ navigation }: Props) {
   const [query, setQuery] = useState('');
   const [foods, setFoods] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const { favourites, addFavourite, removeFavourite } = useAppStore();
   const theme = useTheme();
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const searchWidth = useRef(new Animated.Value(0)).current;
+  const bounceAnim = useRef(new Animated.Value(0)).current;
+
+  // Empty state bounce animation
+  useEffect(() => {
+    if (foods.length === 0 && !loading) {
+      const bounceLoop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(bounceAnim, {
+            toValue: -10,
+            duration: 500,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.spring(bounceAnim, {
+            toValue: 0,
+            tension: 100,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      bounceLoop.start();
+      return () => bounceLoop.stop();
+    }
+  }, [foods.length, loading]);
 
   const searchFoods = useCallback(async (q: string) => {
     setLoading(true);
@@ -37,6 +64,7 @@ export default function SearchScreen({ navigation }: Props) {
       setFoods(results);
 
       // Animate results
+      fadeAnim.setValue(0);
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 300,
@@ -57,6 +85,26 @@ export default function SearchScreen({ navigation }: Props) {
     const timeout = setTimeout(() => searchFoods(query), 300);
     return () => clearTimeout(timeout);
   }, [query]);
+
+  const handleSearchFocus = () => {
+    setSearchFocused(true);
+    Animated.spring(searchWidth, {
+      toValue: 1,
+      tension: 100,
+      friction: 8,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleSearchBlur = () => {
+    setSearchFocused(false);
+    Animated.spring(searchWidth, {
+      toValue: 0,
+      tension: 100,
+      friction: 8,
+      useNativeDriver: false,
+    }).start();
+  };
 
   const isFavourite = (id: string) => favourites.some(f => f.id === id);
 
@@ -111,8 +159,15 @@ export default function SearchScreen({ navigation }: Props) {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <MaterialIcons name="search" size={22} color={theme.colors.textSecondary} />
+      <Animated.View
+        style={[
+          styles.searchContainer,
+          {
+            transform: [{ scaleX: searchWidth.interpolate({ inputRange: [0, 1], outputRange: [1, 1.02] }) }],
+          },
+        ]}
+      >
+        <MaterialIcons name="search" size={22} color={searchFocused ? theme.colors.primary : theme.colors.textSecondary} />
         <TextInput
           style={styles.searchInput}
           placeholder="Tìm tên món hoặc mô tả..."
@@ -120,13 +175,15 @@ export default function SearchScreen({ navigation }: Props) {
           value={query}
           onChangeText={setQuery}
           autoCapitalize="none"
+          onFocus={handleSearchFocus}
+          onBlur={handleSearchBlur}
         />
         {query.length > 0 && (
           <TouchableOpacity onPress={() => setQuery('')} activeOpacity={0.7}>
             <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
           </TouchableOpacity>
         )}
-      </View>
+      </Animated.View>
 
       {/* Results */}
       {loading ? (
@@ -141,7 +198,14 @@ export default function SearchScreen({ navigation }: Props) {
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           ListEmptyComponent={
-            <View style={styles.emptyState}>
+            <Animated.View
+              style={[
+                styles.emptyState,
+                {
+                  transform: [{ translateY: bounceAnim }],
+                },
+              ]}
+            >
               <MaterialIcons name="search-off" size={64} color={theme.colors.surfaceVariant} />
               <Text style={styles.emptyTitle}>Không tìm thấy món nào</Text>
               <Text style={styles.emptySubtitle}>
@@ -149,53 +213,77 @@ export default function SearchScreen({ navigation }: Props) {
                   ? 'Thử từ khóa khác nhé'
                   : 'Nhập từ khóa để bắt đầu tìm kiếm'}
               </Text>
-            </View>
+            </Animated.View>
           }
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.foodRow}
-              activeOpacity={0.7}
-              onPress={() => {
-                (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
-              }}
-            >
-              <View style={styles.foodInfo}>
-                <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
-                  <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
-                    {getCategoryLabel(item.category)}
-                  </Text>
-                </View>
-                <Text style={styles.foodName}>{item.name}</Text>
-                <Text style={styles.foodDesc} numberOfLines={2}>
-                  {item.description}
-                </Text>
-                <View style={styles.metaRow}>
-                  <View style={styles.metaItem}>
-                    <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
-                    <Text style={styles.metaText}>{item.prepTime} phút</Text>
-                  </View>
-                </View>
-              </View>
-              <TouchableOpacity
-                style={styles.favBtn}
-                onPress={() => toggleFavourite(item)}
-                activeOpacity={0.7}
+          renderItem={({ item, index }) => {
+            const itemFadeAnim = useRef(new Animated.Value(0)).current;
+
+            useEffect(() => {
+              Animated.timing(itemFadeAnim, {
+                toValue: 1,
+                duration: 300,
+                delay: index * 50,
+                useNativeDriver: true,
+              }).start();
+            }, []);
+
+            return (
+              <Animated.View
+                style={{
+                  opacity: itemFadeAnim,
+                  transform: [
+                    {
+                      translateY: itemFadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0],
+                      }),
+                    },
+                  ],
+                }}
               >
-                <MaterialIcons
-                  name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
-                  size={28}
-                  color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary}
-                />
-              </TouchableOpacity>
-            </TouchableOpacity>
-          )}
+                <TouchableOpacity
+                  style={styles.foodRow}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
+                  }}
+                >
+                  <View style={styles.foodInfo}>
+                    <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
+                      <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
+                        {getCategoryLabel(item.category)}
+                      </Text>
+                    </View>
+                    <Text style={styles.foodName}>{item.name}</Text>
+                    <Text style={styles.foodDesc} numberOfLines={2}>
+                      {item.description}
+                    </Text>
+                    <View style={styles.metaRow}>
+                      <View style={styles.metaItem}>
+                        <MaterialIcons name="schedule" size={16} color={theme.colors.textSecondary} />
+                        <Text style={styles.metaText}>{item.prepTime} phút</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.favBtn}
+                    onPress={() => toggleFavourite(item)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons
+                      name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
+                      size={28}
+                      color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              </Animated.View>
+            );
+          }}
         />
       )}
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-      </View>
+
     </SafeAreaView>
   );
 }

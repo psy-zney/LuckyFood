@@ -171,10 +171,7 @@ export default function FavouritesScreen({ navigation }: Props) {
         />
       )}
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
-      </View>
+
     </SafeAreaView>
   );
 }
