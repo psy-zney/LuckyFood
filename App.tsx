@@ -5,20 +5,16 @@ import { bootstrapDatabase } from './src/database/db-service';
 import { useAppStore, useSettings } from './src/store';
 import AppNavigator from './src/navigation/AppNavigator';
 import { theme } from './src/utils/theme';
+import { ThemeProvider } from './src/utils/ThemeProvider';
+import { AuthProvider } from './src/utils/AuthProvider';
 import { useFonts } from 'expo-font';
 import {
-  Newsreader_400Regular,
-  Newsreader_500Medium,
-  Newsreader_600SemiBold,
-  Newsreader_700Bold,
-  Newsreader_400Regular_Italic,
-} from '@expo-google-fonts/newsreader';
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-} from '@expo-google-fonts/plus-jakarta-sans';
+  Quicksand_300Light,
+  Quicksand_400Regular,
+  Quicksand_500Medium,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from '@expo-google-fonts/quicksand';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function App() {
@@ -28,15 +24,11 @@ export default function App() {
   const setFirstLaunch = useAppStore((s) => s.setFirstLaunch);
 
   const [fontsLoaded] = useFonts({
-    Newsreader: Newsreader_400Regular,
-    Newsreader_Medium: Newsreader_500Medium,
-    Newsreader_SemiBold: Newsreader_600SemiBold,
-    Newsreader_Bold: Newsreader_700Bold,
-    Newsreader_Italic: Newsreader_400Regular_Italic,
-    'Plus Jakarta Sans': PlusJakartaSans_400Regular,
-    'Plus Jakarta Sans_Medium': PlusJakartaSans_500Medium,
-    'Plus Jakarta Sans_SemiBold': PlusJakartaSans_600SemiBold,
-    'Plus Jakarta Sans_Bold': PlusJakartaSans_700Bold,
+    Quicksand_Light: Quicksand_300Light,
+    Quicksand: Quicksand_400Regular,
+    Quicksand_Medium: Quicksand_500Medium,
+    Quicksand_SemiBold: Quicksand_600SemiBold,
+    Quicksand_Bold: Quicksand_700Bold,
   });
 
   useEffect(() => {
@@ -77,7 +69,7 @@ export default function App() {
       <View style={styles.splash}>
         <View style={styles.splashContent}>
           <MaterialIcons name="restaurant" size={64} color={theme.colors.primary} />
-          <Text style={styles.splashTitle}>LuckyFood</Text>
+          <Text style={styles.splashTitle}>LuckyFood 💕</Text>
           <ActivityIndicator
             size="large"
             color={theme.colors.primary}
@@ -91,7 +83,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <AuthProvider>
+        <ThemeProvider>
+          <AppNavigator />
+        </ThemeProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
@@ -108,14 +104,14 @@ const styles = StyleSheet.create({
     gap: theme.spacing.lg,
   },
   splashTitle: {
-    fontFamily: 'Newsreader',
+    fontFamily: 'Quicksand_Bold',
     fontSize: 32,
     fontWeight: '700',
     color: theme.colors.text,
     letterSpacing: -1,
   },
   splashText: {
-    fontFamily: 'Plus Jakarta Sans',
+    fontFamily: 'Quicksand',
     fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
   },
@@ -131,13 +127,13 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   errorTitle: {
-    fontFamily: 'Newsreader',
+    fontFamily: 'Quicksand_Bold',
     fontSize: theme.typography.sizes.xl,
     fontWeight: '700',
     color: theme.colors.text,
   },
   errorMessage: {
-    fontFamily: 'Plus Jakarta Sans',
+    fontFamily: 'Quicksand',
     fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
     textAlign: 'center',

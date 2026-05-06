@@ -11,11 +11,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getDb } from '../database/db-service';
-import { theme } from '../utils/theme';
+import { useTheme } from '../utils/ThemeProvider';
 import { FoodItem } from '../database/mockData';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../navigation/AppNavigator';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAppStore } from '../store';
 
 type Props = {
   navigation: BottomTabNavigationProp<RootTabParamList, 'RandomWheel'>;
@@ -34,6 +35,8 @@ export default function RandomWheelScreen({ navigation }: Props) {
   const [result, setResult] = useState<FoodItem | null>(null);
   const [loading, setLoading] = useState(false);
   const [slotText, setSlotText] = useState('?');
+  const theme = useTheme();
+  const { incrementPopularity, addMeal } = useAppStore();
 
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -167,6 +170,8 @@ export default function RandomWheelScreen({ navigation }: Props) {
 
       if (food) {
         setSlotText(food.name);
+        // Increment popularity for this food
+        incrementPopularity(food.id);
 
         // Brief pause so user sees the final name in the slot
         setTimeout(() => {
@@ -236,9 +241,11 @@ export default function RandomWheelScreen({ navigation }: Props) {
     outputRange: [0.15, 0.45],
   });
 
+  const styles = createStyles(theme);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background} />
+      <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -246,7 +253,7 @@ export default function RandomWheelScreen({ navigation }: Props) {
           <MaterialIcons name="casino" size={28} color={theme.colors.primary} />
           <Text style={styles.headerTitle}>Xúc Xắc May Mắn</Text>
         </View>
-        <Text style={styles.headerSubtitle}>Chạm để khám phá món ăn hôm nay</Text>
+        <Text style={styles.headerSubtitle}>Chạm để khám phá món ăn hôm nay 💕</Text>
       </View>
 
       <View style={styles.mainCanvas}>
@@ -377,237 +384,299 @@ export default function RandomWheelScreen({ navigation }: Props) {
 
               {/* Action Buttons */}
               <View style={styles.actionRow}>
+                <TouchableOpacity
+                  style={styles.calendarBtn}
+                  onPress={() => {
+                    addMeal(result.id, 'lunch');
+                    navigation.navigate('Calendar');
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <MaterialIcons name="calendar-month" size={20} color={theme.colors.surface} />
+                  <Text style={styles.calendarBtnText}>Chốt Món</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.resetBtn} onPress={reset}>
                   <MaterialIcons name="refresh" size={20} color={theme.colors.surface} />
                   <Text style={styles.resetBtnText}>Thử Lại</Text>
                 </TouchableOpacity>
               </View>
+
+              {/* Favourite Button */}
+              <TouchableOpacity
+                style={styles.favButton}
+                onPress={() => {
+                  // Add to favourites logic here
+                  console.log('Add to favourites:', result.id);
+                }}
+                activeOpacity={0.8}
+              >
+                <MaterialIcons name="favorite" size={24} color={theme.colors.heart} />
+              </TouchableOpacity>
             </View>
           </Animated.View>
         )}
+      </View>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.sm,
-    backgroundColor: theme.colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.borderSubtle,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
-  headerTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xl,
-    fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.text,
-    letterSpacing: -0.5,
-  },
-  headerSubtitle: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    marginTop: 4,
-  },
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.sm,
+      paddingBottom: theme.spacing.xs,
+      backgroundColor: theme.colors.background,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.borderSubtle,
+    },
+    headerContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+    },
+    headerTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xl,
+      fontWeight: theme.typography.weights.semiBold,
+      color: theme.colors.text,
+      letterSpacing: -0.5,
+    },
+    headerSubtitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      marginTop: 4,
+    },
 
-  mainCanvas: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    gap: theme.spacing.xl,
-  },
+    mainCanvas: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      gap: theme.spacing.xl,
+    },
 
-  // Slot card
-  slotCard: {
-    width: SCREEN_WIDTH * 0.75,
-    paddingVertical: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.md,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-    shadowColor: theme.colors.text,
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
-  },
-  slotInner: {
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-  },
-  slotText: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xxl,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text,
-    textAlign: 'center',
-    letterSpacing: -0.5,
-  },
-  slotTextAnimating: {
-    color: theme.colors.primary,
-  },
+    // Slot card
+    slotCard: {
+      width: SCREEN_WIDTH * 0.75,
+      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borderRadius.xl,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+      ...theme.shadows.large,
+    },
+    slotInner: {
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    slotText: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xxl,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.text,
+      textAlign: 'center',
+      letterSpacing: -0.5,
+    },
+    slotTextAnimating: {
+      color: theme.colors.primary,
+    },
 
-  // Roll button
-  buttonWrapper: {
-    alignItems: 'center',
-  },
-  rollButton: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'visible',
-  },
-  rollButtonGlow: {
-    position: 'absolute',
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    backgroundColor: theme.colors.primary,
-    shadowColor: theme.colors.primary,
-    elevation: 16,
-  },
-  rollButtonContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  rollButtonText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.surface,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
+    // Roll button
+    buttonWrapper: {
+      alignItems: 'center',
+    },
+    rollButton: {
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'visible',
+    },
+    rollButtonGlow: {
+      position: 'absolute',
+      width: 130,
+      height: 130,
+      borderRadius: 65,
+      backgroundColor: theme.colors.primary,
+      shadowColor: theme.colors.primary,
+      elevation: 16,
+    },
+    rollButtonContent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+    },
+    rollButtonText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.surface,
+      letterSpacing: 2,
+      textTransform: 'uppercase',
+    },
 
-  // Result
-  resultContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  resultCard: {
-    backgroundColor: theme.colors.surface,
-    padding: theme.spacing.xl,
-    borderRadius: theme.borderRadius.xl,
-    alignItems: 'center',
-    width: '100%',
-    shadowColor: theme.colors.text,
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 12,
-    borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-  },
-  resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
-  },
-  resultIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  resultLabel: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.typography.weights.medium,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  divider: {
-    width: '60%',
-    height: 1,
-    backgroundColor: theme.colors.borderSubtle,
-    marginVertical: theme.spacing.sm,
-  },
-  resultName: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xxl,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-    textAlign: 'center',
-    fontWeight: theme.typography.weights.bold,
-    letterSpacing: -0.5,
-    lineHeight: 40,
-  },
-  resultDesc: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  resultMeta: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.lg,
-  },
-  metaChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: theme.colors.background,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: theme.borderRadius.round,
-    borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-  },
-  metaText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text,
-    fontWeight: theme.typography.weights.medium,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-  },
-  resetBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.xs,
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.lg,
-    shadowColor: theme.colors.primary,
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
-  },
-  resetBtnText: {
-    fontFamily: theme.typography.families.body,
-    color: theme.colors.surface,
-    fontWeight: theme.typography.weights.bold,
-    fontSize: theme.typography.sizes.md,
-    letterSpacing: 0.3,
-  },
-});
+    // Result
+    resultContainer: {
+      width: '100%',
+      alignItems: 'center',
+    },
+    resultCard: {
+      backgroundColor: theme.colors.surface,
+      padding: theme.spacing.xl,
+      borderRadius: theme.borderRadius.xl,
+      alignItems: 'center',
+      width: '100%',
+      ...theme.shadows.large,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+    },
+    resultHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.sm,
+    },
+    resultIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    resultLabel: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      fontWeight: theme.typography.weights.medium,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    divider: {
+      width: '60%',
+      height: 1,
+      backgroundColor: theme.colors.borderSubtle,
+      marginVertical: theme.spacing.sm,
+    },
+    resultName: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xxl,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+      textAlign: 'center',
+      fontWeight: theme.typography.weights.bold,
+      letterSpacing: -0.5,
+      lineHeight: 40,
+    },
+    resultDesc: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.md,
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+    resultMeta: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.lg,
+    },
+    metaChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: theme.borderRadius.round,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+    },
+    metaText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.text,
+      fontWeight: theme.typography.weights.medium,
+    },
+    actionRow: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    calendarBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.secondary,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: 14,
+      borderRadius: theme.borderRadius.lg,
+      ...theme.shadows.medium,
+    },
+    calendarBtnText: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.surface,
+      fontWeight: theme.typography.weights.bold,
+      fontSize: theme.typography.sizes.md,
+      letterSpacing: 0.3,
+    },
+    resetBtn: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: 14,
+      borderRadius: theme.borderRadius.lg,
+      ...theme.shadows.medium,
+    },
+    resetBtnText: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.surface,
+      fontWeight: theme.typography.weights.bold,
+      fontSize: theme.typography.sizes.md,
+      letterSpacing: 0.3,
+    },
+    favButton: {
+      position: 'absolute',
+      top: theme.spacing.md,
+      right: theme.spacing.md,
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: theme.colors.surface,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+      ...theme.shadows.medium,
+    },
+    footer: {
+      alignItems: 'center',
+      paddingVertical: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    footerText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+  });

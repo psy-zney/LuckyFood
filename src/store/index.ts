@@ -11,13 +11,17 @@ import { useShallow } from 'zustand/react/shallow';
 import { createUserSlice, UserSlice, UserSliceActions } from './userSlice';
 import { createSettingsSlice, SettingsSlice, SettingsSliceActions } from './settingsSlice';
 import { createFavouritesSlice, FavouritesSlice, FavouritesSliceActions } from './favouritesSlice';
+import { createPopularitySlice, PopularitySlice, PopularitySliceActions } from './popularitySlice';
+import { createMealHistorySlice, MealHistorySlice, MealHistorySliceActions } from './mealHistorySlice';
 
-type StoreState = UserSlice & UserSliceActions & SettingsSlice & SettingsSliceActions & FavouritesSlice & FavouritesSliceActions;
+type StoreState = UserSlice & UserSliceActions & SettingsSlice & SettingsSliceActions & FavouritesSlice & FavouritesSliceActions & PopularitySlice & PopularitySliceActions & MealHistorySlice & MealHistorySliceActions;
 
 export const useAppStore = create<StoreState>()((...args) => ({
   ...createUserSlice(...args),
   ...createSettingsSlice(...args),
   ...createFavouritesSlice(...args),
+  ...createPopularitySlice(...args),
+  ...createMealHistorySlice(...args),
 }));
 
 // ─── Typed Selectors (tiện dùng, tránh boilerplate) ───────────────────────────

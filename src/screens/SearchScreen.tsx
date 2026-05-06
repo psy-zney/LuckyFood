@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, StatusBar, ActivityIndicator, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { RootTabParamList } from '../navigation/AppNavigator';
-import { theme } from '../utils/theme';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
+import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getDb } from '../database/db-service';
 import { FoodItem } from '../database/mockData';
@@ -18,6 +19,7 @@ export default function SearchScreen({ navigation }: Props) {
   const [foods, setFoods] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
   const { favourites, addFavourite, removeFavourite } = useAppStore();
+  const theme = useTheme();
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -68,8 +70,8 @@ export default function SearchScreen({ navigation }: Props) {
       case 'com': return theme.colors.primaryContainer;
       case 'bun-pho': return theme.colors.secondaryContainer;
       case 'banh': return theme.colors.tertiaryContainer;
-      case 'chay': return '#E8F5E9';
-      case 'nuoc': return '#E3F2FD';
+      case 'chay': return theme.colors.secondaryContainer;
+      case 'nuoc': return theme.colors.tertiaryContainer;
       default: return theme.colors.surfaceVariant;
     }
   };
@@ -79,8 +81,8 @@ export default function SearchScreen({ navigation }: Props) {
       case 'com': return theme.colors.primary;
       case 'bun-pho': return theme.colors.secondary;
       case 'banh': return theme.colors.tertiary;
-      case 'chay': return '#2E7D32';
-      case 'nuoc': return '#1565C0';
+      case 'chay': return theme.colors.secondary;
+      case 'nuoc': return theme.colors.tertiary;
       default: return theme.colors.text;
     }
   };
@@ -96,14 +98,16 @@ export default function SearchScreen({ navigation }: Props) {
     }
   };
 
+  const styles = createStyles(theme);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background} />
+      <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Tìm Món Ăn</Text>
-        <Text style={styles.headerSubtitle}>Khám phá hàng trăm món ngon</Text>
+        <Text style={styles.headerSubtitle}>Khám phá hàng trăm món ngon 💕</Text>
       </View>
 
       {/* Search Bar */}
@@ -152,12 +156,11 @@ export default function SearchScreen({ navigation }: Props) {
               style={styles.foodRow}
               activeOpacity={0.7}
               onPress={() => {
-                // Navigate to detail screen (implement later)
-                console.log('Navigate to:', item.id);
+                (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
               }}
             >
               <View style={styles.foodInfo}>
-                <View style={styles.categoryBadge}>
+                <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) }]}>
                   <Text style={[styles.categoryText, { color: getCategoryTextColor(item.category) }]}>
                     {getCategoryLabel(item.category)}
                   </Text>
@@ -181,152 +184,169 @@ export default function SearchScreen({ navigation }: Props) {
                 <MaterialIcons
                   name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
                   size={28}
-                  color={isFavourite(item.id) ? theme.colors.tertiary : theme.colors.textSecondary}
+                  color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary}
                 />
               </TouchableOpacity>
             </TouchableOpacity>
           )}
         />
       )}
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
+      </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.lg,
-    backgroundColor: theme.colors.background,
-  },
-  headerTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xxl,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-    letterSpacing: -0.5,
-  },
-  headerSubtitle: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-    marginHorizontal: theme.spacing.lg,
-    marginBottom: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.surfaceVariant,
-    borderRadius: theme.borderRadius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.borderSubtle,
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.text,
-    paddingVertical: 4,
-  },
-  listContainer: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: 100,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: theme.colors.borderSubtle,
-    marginVertical: theme.spacing.sm,
-  },
-  foodRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-    gap: theme.spacing.md,
-  },
-  foodInfo: {
-    flex: 1,
-  },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.round,
-    marginBottom: theme.spacing.xs,
-  },
-  categoryText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.bold,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  foodName: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.lg,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-    fontWeight: theme.typography.weights.semiBold,
-  },
-  foodDesc: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm,
-    lineHeight: 20,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  metaText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.textSecondary,
-  },
-  favBtn: {
-    padding: theme.spacing.sm,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.md,
-    paddingTop: 60,
-  },
-  loadingText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingTop: 80,
-    gap: theme.spacing.md,
-  },
-  emptyTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xl,
-    color: theme.colors.text,
-    fontWeight: theme.typography.weights.semiBold,
-  },
-  emptySubtitle: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      backgroundColor: theme.colors.background,
+    },
+    headerTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xxl,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+      letterSpacing: -0.5,
+    },
+    headerSubtitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.textSecondary,
+    },
+    searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      marginHorizontal: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.surfaceVariant,
+      borderRadius: theme.borderRadius.xl,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+    },
+    searchInput: {
+      flex: 1,
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.text,
+      paddingVertical: 4,
+    },
+    listContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: 100,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: theme.colors.borderSubtle,
+      marginVertical: theme.spacing.sm,
+    },
+    foodRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.md,
+      gap: theme.spacing.md,
+    },
+    foodInfo: {
+      flex: 1,
+    },
+    categoryBadge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.round,
+      marginBottom: theme.spacing.xs,
+    },
+    categoryText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      fontWeight: theme.typography.weights.bold,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    foodName: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.lg,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    foodDesc: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.sm,
+      lineHeight: 20,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.md,
+    },
+    metaItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    metaText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.textSecondary,
+    },
+    favBtn: {
+      padding: theme.spacing.sm,
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.md,
+      paddingTop: 60,
+    },
+    loadingText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.textSecondary,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingTop: 80,
+      gap: theme.spacing.md,
+    },
+    emptyTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xl,
+      color: theme.colors.text,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    emptySubtitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 24,
+    },
+    footer: {
+      alignItems: 'center',
+      paddingVertical: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    footerText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+  });

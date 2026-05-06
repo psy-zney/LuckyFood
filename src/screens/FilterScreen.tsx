@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { RootTabParamList } from '../navigation/AppNavigator';
-import { theme } from '../utils/theme';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
+import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getDb } from '../database/db-service';
 import { FoodItem, MOCK_INGREDIENTS } from '../database/mockData';
@@ -19,6 +20,7 @@ export default function FilterScreen({ navigation }: Props) {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const { addFavourite, removeFavourite, favourites } = useAppStore();
+  const theme = useTheme();
 
   // Animation values
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -90,8 +92,8 @@ export default function FilterScreen({ navigation }: Props) {
       case 'com': return theme.colors.primaryContainer;
       case 'bun-pho': return theme.colors.secondaryContainer;
       case 'banh': return theme.colors.tertiaryContainer;
-      case 'chay': return '#E8F5E9';
-      case 'nuoc': return '#E3F2FD';
+      case 'chay': return theme.colors.secondaryContainer;
+      case 'nuoc': return theme.colors.tertiaryContainer;
       default: return theme.colors.surfaceVariant;
     }
   };
@@ -101,8 +103,8 @@ export default function FilterScreen({ navigation }: Props) {
       case 'com': return theme.colors.primary;
       case 'bun-pho': return theme.colors.secondary;
       case 'banh': return theme.colors.tertiary;
-      case 'chay': return '#2E7D32';
-      case 'nuoc': return '#1565C0';
+      case 'chay': return theme.colors.secondary;
+      case 'nuoc': return theme.colors.tertiary;
       default: return theme.colors.text;
     }
   };
@@ -118,9 +120,11 @@ export default function FilterScreen({ navigation }: Props) {
     }
   };
 
+  const styles = createStyles(theme);
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background} />
+      <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -196,8 +200,7 @@ export default function FilterScreen({ navigation }: Props) {
                     style={styles.resultRow}
                     activeOpacity={0.7}
                     onPress={() => {
-                      // Navigate to detail screen (implement later)
-                      console.log('Navigate to:', item.id);
+                      (navigation.getParent() as NativeStackNavigationProp<RootStackParamList>).navigate('FoodDetail', { food: item });
                     }}
                   >
                     <View style={styles.resultInfo}>
@@ -225,7 +228,7 @@ export default function FilterScreen({ navigation }: Props) {
                       <MaterialIcons
                         name={isFavourite(item.id) ? 'favorite' : 'favorite-border'}
                         size={28}
-                        color={isFavourite(item.id) ? theme.colors.tertiary : theme.colors.textSecondary}
+                        color={isFavourite(item.id) ? theme.colors.heart : theme.colors.textSecondary}
                       />
                     </TouchableOpacity>
                   </TouchableOpacity>
@@ -237,176 +240,189 @@ export default function FilterScreen({ navigation }: Props) {
         )}
 
         <View style={{ height: 100 }} />
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Design & Development by zney_LQK</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.lg,
-    backgroundColor: theme.colors.background,
-  },
-  headerTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xxl,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.xs,
-    letterSpacing: -0.5,
-  },
-  headerSubtitle: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary,
-  },
-  content: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.sm,
-  },
-  ingredientSection: {
-    marginBottom: theme.spacing.xl,
-  },
-  sectionTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.md,
-  },
-  ingredientGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
-  },
-  ingredientChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: 12,
-    backgroundColor: theme.colors.surfaceVariant,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  ingredientChipSelected: {
-    backgroundColor: theme.colors.primaryContainer,
-    borderColor: theme.colors.primary,
-  },
-  ingredientIcon: {
-    fontSize: 18,
-  },
-  ingredientName: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.typography.weights.medium,
-  },
-  ingredientNameSelected: {
-    color: theme.colors.surface,
-  },
-  checkIcon: {
-    marginLeft: 4,
-  },
-  searchBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.sm,
-    backgroundColor: theme.colors.primaryContainer,
-    paddingVertical: 18,
-    borderRadius: theme.borderRadius.xl,
-    marginBottom: theme.spacing.xl,
-    shadowColor: theme.colors.primaryContainer,
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 8,
-  },
-  searchBtnDisabled: {
-    opacity: 0.4,
-  },
-  searchBtnText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.md,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.surface,
-    letterSpacing: 0.3,
-  },
-  resultsSection: {
-    marginTop: theme.spacing.sm,
-  },
-  resultsTitle: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.xl,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.lg,
-    fontWeight: theme.typography.weights.semiBold,
-  },
-  resultRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-    gap: theme.spacing.md,
-  },
-  resultInfo: {
-    flex: 1,
-  },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.round,
-    marginBottom: theme.spacing.xs,
-  },
-  categoryText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.bold,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  resultName: {
-    fontFamily: theme.typography.families.display,
-    fontSize: theme.typography.sizes.lg,
-    color: theme.colors.text,
-    marginBottom: 4,
-    fontWeight: theme.typography.weights.semiBold,
-  },
-  resultDesc: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  metaText: {
-    fontFamily: theme.typography.families.body,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.textSecondary,
-  },
-  favBtn: {
-    padding: theme.spacing.sm,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: theme.colors.borderSubtle,
-    marginVertical: 4,
-  },
-});
+const createStyles = (theme: any) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.background,
+    },
+    headerTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xxl,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+      letterSpacing: -0.5,
+    },
+    headerSubtitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      color: theme.colors.textSecondary,
+    },
+    content: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.sm,
+    },
+    ingredientSection: {
+      marginBottom: theme.spacing.xl,
+    },
+    sectionTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.lg,
+      fontWeight: theme.typography.weights.semiBold,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.md,
+    },
+    ingredientGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm,
+    },
+    ingredientChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: 12,
+      backgroundColor: theme.colors.surfaceVariant,
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: 1.5,
+      borderColor: 'transparent',
+    },
+    ingredientChipSelected: {
+      backgroundColor: theme.colors.primaryContainer,
+      borderColor: theme.colors.primary,
+    },
+    ingredientIcon: {
+      fontSize: 18,
+    },
+    ingredientName: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      fontWeight: theme.typography.weights.medium,
+    },
+    ingredientNameSelected: {
+      color: theme.colors.surface,
+    },
+    checkIcon: {
+      marginLeft: 4,
+    },
+    searchBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.sm,
+      backgroundColor: theme.colors.primary,
+      paddingVertical: 18,
+      borderRadius: theme.borderRadius.xl,
+      marginBottom: theme.spacing.xl,
+      ...theme.shadows.medium,
+    },
+    searchBtnDisabled: {
+      opacity: 0.4,
+    },
+    searchBtnText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.bold,
+      color: theme.colors.surface,
+      letterSpacing: 0.3,
+    },
+    resultsSection: {
+      marginTop: theme.spacing.sm,
+    },
+    resultsTitle: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.xl,
+      color: theme.colors.text,
+      marginBottom: theme.spacing.lg,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    resultRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.md,
+      gap: theme.spacing.md,
+    },
+    resultInfo: {
+      flex: 1,
+    },
+    categoryBadge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: 4,
+      borderRadius: theme.borderRadius.round,
+      marginBottom: theme.spacing.xs,
+    },
+    categoryText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      fontWeight: theme.typography.weights.bold,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    resultName: {
+      fontFamily: theme.typography.families.display,
+      fontSize: theme.typography.sizes.lg,
+      color: theme.colors.text,
+      marginBottom: 4,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    resultDesc: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      marginBottom: 8,
+      lineHeight: 20,
+    },
+    metaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.md,
+    },
+    metaItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    metaText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.textSecondary,
+    },
+    favBtn: {
+      padding: theme.spacing.sm,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: theme.colors.borderSubtle,
+      marginVertical: 4,
+    },
+    footer: {
+      alignItems: 'center',
+      paddingVertical: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    footerText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+  });
