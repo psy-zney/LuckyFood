@@ -4,26 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStore } from '../store';
+import { StaggerIn } from '../components/animations';
 
 export default function ProfileScreen({ navigation }: any) {
   const theme = useTheme();
   const { user, clearUser } = useAppStore();
 
   // Animation values
-  const menuAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
-
-  // Staggered menu item animation
-  useEffect(() => {
-    menuItems.forEach((_, index) => {
-      Animated.timing(menuAnim, {
-        toValue: 1,
-        duration: 300,
-        delay: index * 50,
-        useNativeDriver: true,
-      }).start();
-    });
-  }, []);
 
   const handleLogout = () => {
     // Shake animation
@@ -84,20 +72,7 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Main Functions */}
         <View style={styles.menuSection}>
           {menuItems.map((item, index) => (
-            <Animated.View
-              key={index}
-              style={{
-                opacity: menuAnim,
-                transform: [
-                  {
-                    translateX: menuAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [-30, 0],
-                    }),
-                  },
-                ],
-              }}
-            >
+            <StaggerIn key={index} delay={index * 50} duration={300}>
               <TouchableOpacity
                 style={styles.menuItem}
                 onPress={() => navigation.navigate(item.screen)}
@@ -111,7 +86,7 @@ export default function ProfileScreen({ navigation }: any) {
                 </View>
                 <MaterialIcons name="chevron-right" size={24} color={theme.colors.textSecondary} />
               </TouchableOpacity>
-            </Animated.View>
+            </StaggerIn>
           ))}
         </View>
 
@@ -119,19 +94,7 @@ export default function ProfileScreen({ navigation }: any) {
 
         {/* Settings & System */}
         <View style={styles.menuSection}>
-          <Animated.View
-            style={{
-              opacity: menuAnim,
-              transform: [
-                {
-                  translateX: menuAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-30, 0],
-                  }),
-                },
-              ],
-            }}
-          >
+          <StaggerIn delay={menuItems.length * 50} duration={300}>
             <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
               <View style={styles.menuItemLeft}>
                 <View style={[styles.iconBox, { backgroundColor: theme.colors.surfaceVariant }]}>
@@ -141,21 +104,9 @@ export default function ProfileScreen({ navigation }: any) {
               </View>
               <MaterialIcons name="chevron-right" size={24} color={theme.colors.textSecondary} />
             </TouchableOpacity>
-          </Animated.View>
+          </StaggerIn>
 
-          <Animated.View
-            style={{
-              opacity: menuAnim,
-              transform: [
-                {
-                  translateX: menuAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [-30, 0],
-                  }),
-                },
-              ],
-            }}
-          >
+          <StaggerIn delay={(menuItems.length + 1) * 50} duration={300}>
             <TouchableOpacity style={styles.menuItem} onPress={toggleTheme} activeOpacity={0.7}>
               <View style={styles.menuItemLeft}>
                 <View style={[styles.iconBox, { backgroundColor: theme.colors.surfaceVariant }]}>
@@ -165,7 +116,7 @@ export default function ProfileScreen({ navigation }: any) {
               </View>
               <Text style={styles.settingValue}>{theme.isDark ? 'Bật' : 'Tắt'}</Text>
             </TouchableOpacity>
-          </Animated.View>
+          </StaggerIn>
         </View>
 
         {/* Logout */}

@@ -11,6 +11,7 @@ import { useAuth } from '../utils/AuthProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FoodItem } from '../database/mockData';
 import { getDb } from '../database/db-service';
+import { Pulse } from '../components/animations';
 
 type Props = {
   navigation: CompositeNavigationProp<
@@ -34,7 +35,6 @@ export default function HomeScreen({ navigation }: Props) {
   const streakAnim = React.useRef(new Animated.Value(0)).current;
   const sectionsAnim = React.useRef(new Animated.Value(0)).current;
   const progressAnim = React.useRef(new Animated.Value(0)).current;
-  const pulseAnim = React.useRef(new Animated.Value(1)).current;
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -71,29 +71,8 @@ export default function HomeScreen({ navigation }: Props) {
       useNativeDriver: false,
     }).start();
 
-    // Pulse animation for random section
-    const pulseLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.05,
-          duration: 1500,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1500,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    pulseLoop.start();
-
     // Load top foods
     loadTopFoods();
-
-    return () => pulseLoop.stop();
   }, []);
 
   const loadTopFoods = async () => {
@@ -351,9 +330,9 @@ export default function HomeScreen({ navigation }: Props) {
         <Animated.View
           style={{
             opacity: sectionsAnim,
-            transform: [{ scale: pulseAnim }],
           }}
         >
+          <Pulse duration={1500}>
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => navigation.navigate('RandomWheel')}
@@ -379,6 +358,7 @@ export default function HomeScreen({ navigation }: Props) {
               />
             </View>
           </TouchableOpacity>
+          </Pulse>
         </Animated.View>
 
         {/* Find recipes by ingredients (Filter) */}

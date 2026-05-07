@@ -38,6 +38,15 @@ export default function RandomWheelScreen({ navigation }: Props) {
   const theme = useTheme();
   const { incrementPopularity, addMeal } = useAppStore();
 
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const intervalRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (intervalRef.current) clearTimeout(intervalRef.current);
+    };
+  }, []);
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
@@ -138,12 +147,11 @@ export default function RandomWheelScreen({ navigation }: Props) {
     // Slot machine text cycling
     const totalDuration = 2500; // ms
     const startTime = Date.now();
-    let intervalId: ReturnType<typeof setTimeout>;
 
     const cycle = () => {
       const elapsed = Date.now() - startTime;
       if (elapsed >= totalDuration) {
-        clearTimeout(intervalId);
+        if (intervalRef.current) clearTimeout(intervalRef.current);
         finishRoll();
         return;
       }
@@ -152,7 +160,7 @@ export default function RandomWheelScreen({ navigation }: Props) {
       const delay = 60 + Math.pow(progress, 3) * 400; // 60ms → 460ms
       const idx = Math.floor(Math.random() * PLACEHOLDER_NAMES.length);
       setSlotText(PLACEHOLDER_NAMES[idx]);
-      intervalId = setTimeout(cycle, delay);
+      intervalRef.current = setTimeout(cycle, delay);
     };
     cycle();
   }, [loading, buttonScale, slotScale, slotOpacity, resultAnim, spinRotation]);
@@ -174,7 +182,7 @@ export default function RandomWheelScreen({ navigation }: Props) {
         incrementPopularity(food.id);
 
         // Brief pause so user sees the final name in the slot
-        setTimeout(() => {
+        timerRef.current = setTimeout(() => {
           setResult(food);
           setLoading(false);
 

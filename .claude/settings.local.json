@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm install *)",
       "Bash(npx tsc *)",
-      "Bash(npx expo *)"
+      "Bash(npx expo *)",
+      "Bash(Get-ChildItem -Exclude \"FadeIn.tsx\",\"SlideUp.tsx\",\"ScaleIn.tsx\",\"StaggerIn.tsx\",\"Bounce.tsx\",\"Pulse.tsx\",\"index.ts\")",
+      "Bash(Remove-Item -Force)"
     ]
   }
 }

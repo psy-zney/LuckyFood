@@ -9,7 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getDb } from '../database/db-service';
 import { FoodItem } from '../database/mockData';
 import { useAppStore } from '../store';
-
+import { StaggerIn } from '../components/animations';
 type Props = {
   navigation: BottomTabNavigationProp<RootTabParamList, 'Search'>;
 };
@@ -215,32 +215,8 @@ export default function SearchScreen({ navigation }: Props) {
               </Text>
             </Animated.View>
           }
-          renderItem={({ item, index }) => {
-            const itemFadeAnim = useRef(new Animated.Value(0)).current;
-
-            useEffect(() => {
-              Animated.timing(itemFadeAnim, {
-                toValue: 1,
-                duration: 300,
-                delay: index * 50,
-                useNativeDriver: true,
-              }).start();
-            }, []);
-
-            return (
-              <Animated.View
-                style={{
-                  opacity: itemFadeAnim,
-                  transform: [
-                    {
-                      translateY: itemFadeAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0],
-                      }),
-                    },
-                  ],
-                }}
-              >
+          renderItem={({ item, index }) => (
+            <StaggerIn delay={index * 50} duration={300}>
                 <TouchableOpacity
                   style={styles.foodRow}
                   activeOpacity={0.7}
@@ -277,7 +253,7 @@ export default function SearchScreen({ navigation }: Props) {
                     />
                   </TouchableOpacity>
                 </TouchableOpacity>
-              </Animated.View>
+              </StaggerIn>
             );
           }}
         />
