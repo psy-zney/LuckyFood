@@ -75,7 +75,13 @@ export default function ProfileScreen({ navigation }: any) {
             <StaggerIn key={index} delay={index * 50} duration={300}>
               <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => navigation.navigate(item.screen)}
+                onPress={() => {
+                  if (['Home', 'RandomWheel', 'Filter', 'Favourites'].includes(item.screen)) {
+                    navigation.navigate('MainTabs', { screen: item.screen });
+                  } else {
+                    navigation.navigate(item.screen);
+                  }
+                }}
                 activeOpacity={0.7}
               >
                 <View style={styles.menuItemLeft}>

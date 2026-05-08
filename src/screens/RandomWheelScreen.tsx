@@ -37,9 +37,8 @@ export default function RandomWheelScreen({ navigation }: Props) {
   const [slotText, setSlotText] = useState('?');
   const theme = useTheme();
   const { incrementPopularity, addMeal } = useAppStore();
-
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
-  const intervalRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {

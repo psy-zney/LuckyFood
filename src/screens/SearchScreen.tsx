@@ -154,8 +154,13 @@ export default function SearchScreen({ navigation }: Props) {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Tìm Món Ăn</Text>
-        <Text style={styles.headerSubtitle}>Khám phá hàng trăm món ngon 💕</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12, padding: 4 }}>
+          <MaterialIcons name="chevron-left" size={32} color={theme.colors.text} />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>Tìm Món Ăn</Text>
+          <Text style={styles.headerSubtitle}>Khám phá hàng trăm món ngon 💕</Text>
+        </View>
       </View>
 
       {/* Search Bar */}
@@ -254,8 +259,7 @@ export default function SearchScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 </TouchableOpacity>
               </StaggerIn>
-            );
-          }}
+          )}
         />
       )}
 
@@ -271,6 +275,8 @@ const createStyles = (theme: any) =>
       backgroundColor: theme.colors.background,
     },
     header: {
+      flexDirection: 'row',
+      alignItems: 'center',
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.lg,
       backgroundColor: theme.colors.background,

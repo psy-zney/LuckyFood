@@ -213,6 +213,9 @@ export default function CalendarScreen({ navigation }: Props) {
 
       {/* Header */}
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', left: theme.spacing.lg, top: theme.spacing.md, padding: 4, zIndex: 10 }}>
+          <MaterialIcons name="chevron-left" size={32} color={theme.colors.text} />
+        </TouchableOpacity>
         <View style={styles.headerContent}>
           <MaterialIcons name="calendar-month" size={28} color={theme.colors.primary} />
           <Text style={styles.headerTitle}>Lịch Ăn</Text>

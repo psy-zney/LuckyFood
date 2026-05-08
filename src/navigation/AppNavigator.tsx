@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -84,6 +84,95 @@ export default function AppNavigator() {
   );
 }
 
+const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme }: any) => {
+  const translateY = React.useRef(new Animated.Value(focused ? -6 : 0)).current;
+
+  React.useEffect(() => {
+    Animated.spring(translateY, {
+      toValue: focused ? -6 : 0,
+      tension: 100,
+      friction: 6,
+      useNativeDriver: true,
+    }).start();
+  }, [focused]);
+
+  if (isCenter) {
+    return (
+      <Animated.View
+        style={{
+          alignItems: 'center',
+          transform: [{ translateY }],
+        }}
+      >
+        <View
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: focused
+              ? theme.colors.primary
+              : theme.colors.primaryContainer,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: -28,
+            shadowColor: theme.colors.primary,
+            shadowOpacity: focused ? 0.4 : 0.2,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: focused ? 8 : 4,
+          }}
+        >
+          <MaterialIcons
+            name={name}
+            size={26}
+            color={focused ? theme.colors.surface : theme.colors.primary}
+          />
+        </View>
+        <Text
+          numberOfLines={1}
+          style={{
+          color: focused ? theme.colors.primary : theme.colors.textSecondary,
+          fontFamily: theme.typography.families.body,
+          fontSize: 10,
+          fontWeight: theme.typography.weights.bold,
+          letterSpacing: 0,
+          marginTop: 6,
+          textAlign: 'center',
+          width: 75,
+        }}>
+          {label}
+        </Text>
+      </Animated.View>
+    );
+  }
+
+  return (
+    <Animated.View style={{ alignItems: 'center', transform: [{ translateY }] }}>
+      <MaterialIcons
+        name={name}
+        size={24}
+        color={color}
+        style={{ opacity: focused ? 1 : 0.6 }}
+      />
+      <Text
+        numberOfLines={1}
+        style={{
+        color: color,
+        fontFamily: theme.typography.families.body,
+        fontSize: 10,
+        fontWeight: focused ? theme.typography.weights.bold : theme.typography.weights.medium,
+        letterSpacing: 0,
+        marginTop: 4,
+        opacity: focused ? 1 : 0.8,
+        textAlign: 'center',
+        width: 75,
+      }}>
+        {label}
+      </Text>
+    </Animated.View>
+  );
+};
+
 function MainTabs() {
   const theme = useTheme();
 
@@ -123,6 +212,7 @@ function MainTabs() {
       )}
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: 'transparent',
           borderTopWidth: 0,
@@ -150,12 +240,7 @@ function MainTabs() {
         options={{
           tabBarLabel: 'Khám Phá',
           tabBarIcon: ({ color, focused }) => (
-            <MaterialIcons
-              name="home"
-              size={24}
-              color={color}
-              style={{ opacity: focused ? 1 : 0.6 }}
-            />
+            <AnimatedTabItem name="home" label="Khám Phá" color={color} focused={focused} theme={theme} />
           ),
         }}
       />
@@ -167,39 +252,8 @@ function MainTabs() {
         options={{
           tabBarLabel: 'Xúc Xắc',
           tabBarIcon: ({ focused }) => (
-            <View
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                backgroundColor: focused
-                  ? theme.colors.primary
-                  : theme.colors.primaryContainer,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: -24,
-                shadowColor: theme.colors.primary,
-                shadowOpacity: focused ? 0.4 : 0.2,
-                shadowRadius: 12,
-                shadowOffset: { width: 0, height: 4 },
-                elevation: focused ? 8 : 4,
-              }}
-            >
-              <MaterialIcons
-                name="casino"
-                size={26}
-                color={focused ? theme.colors.surface : theme.colors.primary}
-              />
-            </View>
+            <AnimatedTabItem name="casino" label="Xúc Xắc" focused={focused} isCenter theme={theme} />
           ),
-          tabBarLabelStyle: {
-            fontFamily: theme.typography.families.body,
-            fontSize: 11,
-            fontWeight: theme.typography.weights.bold,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginTop: 8,
-          },
         }}
       />
       <Tab.Screen
@@ -208,12 +262,7 @@ function MainTabs() {
         options={{
           tabBarLabel: 'Nguyên Liệu',
           tabBarIcon: ({ color, focused }) => (
-            <MaterialIcons
-              name="tune"
-              size={24}
-              color={color}
-              style={{ opacity: focused ? 1 : 0.6 }}
-            />
+            <AnimatedTabItem name="tune" label="Nguyên Liệu" color={color} focused={focused} theme={theme} />
           ),
         }}
       />
@@ -223,12 +272,7 @@ function MainTabs() {
         options={{
           tabBarLabel: 'Yêu Thích',
           tabBarIcon: ({ color, focused }) => (
-            <MaterialIcons
-              name={focused ? 'favorite' : 'favorite-border'}
-              size={24}
-              color={color}
-              style={{ opacity: focused ? 1 : 0.6 }}
-            />
+            <AnimatedTabItem name={focused ? 'favorite' : 'favorite-border'} label="Yêu Thích" color={color} focused={focused} theme={theme} />
           ),
         }}
       />
