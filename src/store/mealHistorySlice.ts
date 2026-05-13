@@ -8,6 +8,8 @@ export interface MealEntry {
   foodId: string;
   mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   timestamp: number;
+  caption?: string;
+  imageUrl?: string;
 }
 
 export interface MealHistorySlice {
@@ -21,6 +23,8 @@ export interface MealHistorySliceActions {
   getMealsByDateRange: (startDate: string, endDate: string) => MealEntry[];
   getMealDates: () => string[];
   hasMealOnDate: (date: string) => boolean;
+  updateMealCaption: (date: string, foodId: string, caption: string) => void;
+  updateMealImage: (date: string, foodId: string, imageUrl: string) => void;
 }
 
 export const createMealHistorySlice: StateCreator<MealHistorySlice & MealHistorySliceActions> = (set, get) => ({
@@ -65,4 +69,20 @@ export const createMealHistorySlice: StateCreator<MealHistorySlice & MealHistory
   hasMealOnDate: (date) => {
     return get().mealHistory.some(m => m.date === date);
   },
+  updateMealCaption: (date, foodId, caption) =>
+    set((state) => ({
+      mealHistory: state.mealHistory.map((m) =>
+        m.date === date && m.foodId === foodId
+          ? { ...m, caption }
+          : m
+      ),
+    })),
+  updateMealImage: (date, foodId, imageUrl) =>
+    set((state) => ({
+      mealHistory: state.mealHistory.map((m) =>
+        m.date === date && m.foodId === foodId
+          ? { ...m, imageUrl }
+          : m
+      ),
+    })),
 });

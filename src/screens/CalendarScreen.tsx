@@ -8,6 +8,9 @@ import {
   StatusBar,
   ActivityIndicator,
   Animated,
+  TextInput,
+  Image,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -17,7 +20,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStore } from '../store';
 import { FoodItem } from '../database/mockData';
 import { getDb } from '../database/db-service';
-import { FadeIn, SlideUp, ScaleIn, StaggerIn, Bounce, Pulse } from '../components/animations';
+import { ScaleIn, StaggerIn } from '../components/animations';
+import LocketCamera from '../components/LocketCamera';
 
 type Props = {
   navigation: BottomTabNavigationProp<RootTabParamList>;
@@ -32,7 +36,7 @@ const MEAL_TYPES = [
 
 export default function CalendarScreen({ navigation }: Props) {
   const theme = useTheme();
-  const { getMealsByDate, getMealDates, addMeal, removeMeal } = useAppStore();
+  const { getMealsByDate, getMealDates, removeMeal, updateMealCaption, updateMealImage } = useAppStore();
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -41,11 +45,13 @@ export default function CalendarScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const [mealDates, setMealDates] = useState<string[]>([]);
 
+  // Camera state
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [activeFoodId, setActiveFoodId] = useState<string | null>(null);
+
   // Animation values
   const monthSlideAnim = useRef(new Animated.Value(0)).current;
   const dayScaleAnim = useRef(new Animated.Value(1)).current;
-  const mealCardAnim = useRef(new Animated.Value(0)).current;
-  const statsAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadMealDates();
@@ -110,11 +116,6 @@ export default function CalendarScreen({ navigation }: Props) {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const entries = getMealsByDate(dateStr);
     return entries;
-  };
-
-  const hasMealOnDay = (day: number) => {
-    const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return mealDates.includes(dateStr);
   };
 
   const isToday = (day: number) => {
@@ -283,7 +284,6 @@ export default function CalendarScreen({ navigation }: Props) {
                 return <View key={`empty-${index}`} style={styles.dayCell} />;
               }
 
-              const hasMeal = hasMealOnDay(day);
               const today = isToday(day);
               const selected = isSelected(day);
               const dayMeals = getMealsForDay(day);
@@ -301,6 +301,10 @@ export default function CalendarScreen({ navigation }: Props) {
                 >
                   <Animated.View
                     style={{
+                      width: '100%',
+                      height: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       transform: [
                         {
                           scale: dayScaleAnim.interpolate({
@@ -392,6 +396,52 @@ export default function CalendarScreen({ navigation }: Props) {
                         <MaterialIcons name="schedule" size={14} color={theme.colors.textSecondary} />
                         <Text style={styles.mealMetaText}>{food.prepTime} phút</Text>
                       </View>
+                      
+                      {/* Caption Input */}
+                      <View style={styles.captionContainer}>
+                        <MaterialIcons name="edit-note" size={20} color={theme.colors.textSecondary} />
+                        <TextInput
+                          style={styles.captionInput}
+                          placeholder="Thêm nhật ký, cảm nghĩ..."
+                          placeholderTextColor={theme.colors.textSecondary}
+                          value={entry?.caption || ''}
+                          onChangeText={(text) => {
+                            const dateStr = selectedDate.toISOString().split('T')[0];
+                            updateMealCaption(dateStr, food.id, text);
+                            setMealEntries(prev => prev.map(e => e.foodId === food.id ? { ...e, caption: text } : e));
+                          }}
+                          multiline
+                        />
+                      </View>
+
+                      {/* Photo Section */}
+                      <View style={styles.photoSection}>
+                        {entry?.imageUrl ? (
+                          <View style={styles.photoContainer}>
+                            <Image source={{ uri: entry.imageUrl }} style={styles.mealPhoto} />
+                            <TouchableOpacity 
+                              style={styles.retakePhotoButton}
+                              onPress={() => {
+                                setActiveFoodId(food.id);
+                                setIsCameraOpen(true);
+                              }}
+                            >
+                              <MaterialIcons name="camera-alt" size={20} color={theme.colors.surface} />
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <TouchableOpacity 
+                            style={styles.addPhotoButton}
+                            onPress={() => {
+                              setActiveFoodId(food.id);
+                              setIsCameraOpen(true);
+                            }}
+                          >
+                            <MaterialIcons name="add-a-photo" size={20} color={theme.colors.primary} />
+                            <Text style={styles.addPhotoText}>Thêm ảnh Locket</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     </View>
                   </StaggerIn>
                 );
@@ -427,8 +477,30 @@ export default function CalendarScreen({ navigation }: Props) {
           </View>
         </View>
 
-
       </ScrollView>
+
+      {/* Camera Modal */}
+      <Modal
+        visible={isCameraOpen}
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        <LocketCamera 
+          onClose={() => {
+            setIsCameraOpen(false);
+            setActiveFoodId(null);
+          }}
+          onPhotoTaken={(uri) => {
+            if (activeFoodId) {
+              const dateStr = selectedDate.toISOString().split('T')[0];
+              updateMealImage(dateStr, activeFoodId, uri);
+              setMealEntries(prev => prev.map(e => e.foodId === activeFoodId ? { ...e, imageUrl: uri } : e));
+            }
+            setIsCameraOpen(false);
+            setActiveFoodId(null);
+          }}
+        />
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -548,14 +620,6 @@ const createStyles = (theme: any) =>
       color: theme.colors.primary,
       fontWeight: theme.typography.weights.bold,
     },
-    mealIndicator: {
-      position: 'absolute',
-      bottom: 4,
-      width: 4,
-      height: 4,
-      borderRadius: 2,
-      backgroundColor: theme.colors.secondary,
-    },
     mealImagesContainer: {
       position: 'absolute',
       bottom: 4,
@@ -655,6 +719,67 @@ const createStyles = (theme: any) =>
       fontSize: theme.typography.sizes.xs,
       color: theme.colors.textSecondary,
     },
+    captionContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginTop: theme.spacing.md,
+      paddingTop: theme.spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.borderSubtle,
+      gap: theme.spacing.xs,
+    },
+    captionInput: {
+      flex: 1,
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.text,
+      minHeight: 40,
+      textAlignVertical: 'top',
+    },
+    photoSection: {
+      marginTop: theme.spacing.md,
+      alignItems: 'center',
+    },
+    addPhotoButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.primaryContainer,
+      borderRadius: theme.borderRadius.full,
+    },
+    addPhotoText: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.primary,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    photoContainer: {
+      width: '100%',
+      aspectRatio: 3 / 4,
+      borderRadius: theme.borderRadius.xl,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    mealPhoto: {
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+    },
+    retakePhotoButton: {
+      position: 'absolute',
+      bottom: theme.spacing.sm,
+      right: theme.spacing.sm,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.3)',
+    },
     emptyState: {
       alignItems: 'center',
       padding: theme.spacing.xl,
@@ -707,16 +832,5 @@ const createStyles = (theme: any) =>
       fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
       marginTop: 2,
-    },
-    footer: {
-      alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      marginTop: theme.spacing.md,
-    },
-    footerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
-      color: theme.colors.textSecondary,
-      textAlign: 'center',
     },
   });

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, View, ViewStyle } from 'react-native';
+import { Animated, ViewStyle } from 'react-native';
 
 interface ScaleInProps {
   children: React.ReactNode;
@@ -19,14 +19,13 @@ export const ScaleIn: React.FC<ScaleInProps> = ({
   const scaleAnim = useRef(new Animated.Value(from)).current;
 
   useEffect(() => {
-    Animated.spring(scaleAnim, {
+    Animated.timing(scaleAnim, {
       toValue: 1,
-      tension: 100,
-      friction: 8,
+      duration,
       delay,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [delay, duration, scaleAnim]);
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>

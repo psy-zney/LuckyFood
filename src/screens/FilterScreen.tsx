@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, ActivityIndicator, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getDb, getFoodsByIngredients } from '../database/db-service';
+import { getFoodsByIngredients } from '../database/db-service';
 import { FoodItem, MOCK_INGREDIENTS } from '../database/mockData';
 import { useAppStore } from '../store';
 
@@ -479,16 +479,5 @@ const createStyles = (theme: any) =>
       color: theme.colors.textSecondary,
       marginBottom: theme.spacing.md,
       fontStyle: 'italic',
-    },
-    footer: {
-      alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      marginTop: theme.spacing.md,
-    },
-    footerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
-      color: theme.colors.textSecondary,
-      textAlign: 'center',
     },
   });

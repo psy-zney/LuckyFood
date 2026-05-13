@@ -1,72 +1,118 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  StatusBar,
+  Alert,
   KeyboardAvoidingView,
   Platform,
-  Alert,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '../utils/ThemeProvider';
 import { useAppStore } from '../store';
+import { isValidEmail, normalizeEmail, registerLocalAccount } from '../utils/localAuth';
 
 type Props = {
   navigation: any;
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function RegisterScreen({ navigation }: Props) {
   const theme = useTheme();
   const { setUser } = useAppStore();
 
-  const [name, setName] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const emailTrimmed = normalizeEmail(email);
+  const formValid = useMemo(
+    () => displayName.trim() && emailTrimmed && password && confirmPassword && acceptTerms,
+    [displayName, emailTrimmed, password, confirmPassword, acceptTerms]
+  );
+
+  const closeAuthFlow = () => {
+    const parent = navigation.getParent?.();
+    if (parent?.canGoBack?.()) {
+      parent.goBack();
+      return;
+    }
+    navigation.goBack();
+  };
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin');
+    if (isSubmitting) return;
+
+    if (!formValid) {
+      setError('Vui lòng nhập đầy đủ thông tin và chấp nhận điều khoản.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    if (password !== confirmPassword) {
-      Alert.alert('Lỗi', 'Mật khẩu xác nhận không khớp');
+    if (!isValidEmail(emailTrimmed)) {
+      setError('Email không hợp lệ.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Lỗi', 'Mật khẩu phải có ít nhất 6 ký tự');
+      setError('Mật khẩu phải có ít nhất 6 ký tự.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    setLoading(true);
+    if (password !== confirmPassword) {
+      setError('Mật khẩu xác nhận không khớp.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
 
-    // Simulate registration - trong thực tế sẽ gọi API
-    setTimeout(() => {
-      setUser({
-        uid: 'user-' + Date.now(),
-        displayName: name,
-        email: email,
-        avatarUrl: null,
-        role: 'user',
-        currentStreak: 0,
-        highestStreak: 0,
-        lastCookedDate: null,
-        favoriteFoodIds: [],
-      });
+    setIsSubmitting(true);
+    setError(null);
 
-      setLoading(false);
-      Alert.alert('Thành công', 'Đăng ký thành công!');
-      navigation.replace('Home');
-    }, 1000);
+    await sleep(350);
+    const result = registerLocalAccount({
+      displayName,
+      email: emailTrimmed,
+      password,
+    });
+
+    if (!result.ok) {
+      setIsSubmitting(false);
+      setError(result.message);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
+
+    setUser({
+      uid: result.account.id,
+      displayName: result.account.displayName,
+      email: result.account.email,
+      avatarUrl: null,
+      role: result.account.role,
+      currentStreak: 0,
+      highestStreak: 0,
+      lastCookedDate: null,
+      favoriteFoodIds: [],
+    });
+
+    setIsSubmitting(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Đăng ký thành công', 'Tài khoản đã được tạo và đăng nhập tự động.');
+    closeAuthFlow();
   };
 
   const styles = createStyles(theme);
@@ -74,129 +120,134 @@ export default function RegisterScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background} />
-
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <MaterialIcons name="restaurant" size={48} color={theme.colors.primary} />
-            <Text style={styles.logoText}>LuckyFood 💕</Text>
-          </View>
-          <Text style={styles.subtitle}>Tạo tài khoản mới</Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          {/* Name Input */}
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="person" size={22} color={theme.colors.textSecondary} />
-            <TextInput
-              style={styles.input}
-              placeholder="Tên hiển thị"
-              placeholderTextColor={theme.colors.textSecondary}
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
-              autoCorrect={false}
-            />
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <View style={styles.header}>
+            <View style={styles.logo}>
+              <MaterialIcons name="person-add" size={32} color={theme.colors.primary} />
+            </View>
+            <Text style={styles.title}>Tạo tài khoản</Text>
+            <Text style={styles.subtitle}>Tạo tài khoản để đồng bộ dữ liệu nấu ăn của bạn.</Text>
           </View>
 
-          {/* Email Input */}
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="email" size={22} color={theme.colors.textSecondary} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor={theme.colors.textSecondary}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-
-          {/* Password Input */}
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock" size={22} color={theme.colors.textSecondary} />
-            <TextInput
-              style={styles.input}
-              placeholder="Mật khẩu"
-              placeholderTextColor={theme.colors.textSecondary}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <MaterialIcons
-                name={showPassword ? 'visibility' : 'visibility-off'}
-                size={22}
-                color={theme.colors.textSecondary}
+          <View style={styles.form}>
+            <Text style={styles.label}>Tên hiển thị</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="person" size={20} color={theme.colors.textSecondary} />
+              <TextInput
+                value={displayName}
+                onChangeText={(value) => {
+                  setDisplayName(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="Ví dụ: Linh Nguyen"
+                placeholderTextColor={theme.colors.textSecondary}
+                autoCapitalize="words"
+                autoCorrect={false}
               />
-            </TouchableOpacity>
-          </View>
+            </View>
 
-          {/* Confirm Password Input */}
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock" size={22} color={theme.colors.textSecondary} />
-            <TextInput
-              style={styles.input}
-              placeholder="Xác nhận mật khẩu"
-              placeholderTextColor={theme.colors.textSecondary}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showConfirmPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-              <MaterialIcons
-                name={showConfirmPassword ? 'visibility' : 'visibility-off'}
-                size={22}
-                color={theme.colors.textSecondary}
+            <Text style={styles.label}>Email</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="email" size={20} color={theme.colors.textSecondary} />
+              <TextInput
+                value={email}
+                onChangeText={(value) => {
+                  setEmail(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.colors.textSecondary}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
-            </TouchableOpacity>
-          </View>
+            </View>
 
-          {/* Terms */}
-          <View style={styles.termsContainer}>
-            <TouchableOpacity onPress={() => {}}>
-              <MaterialIcons name="check-box" size={20} color={theme.colors.primary} />
-            </TouchableOpacity>
-            <Text style={styles.termsText}>
-              Tôi đồng ý với{' '}
-              <Text style={styles.termsLink}>Điều khoản</Text> và{' '}
-              <Text style={styles.termsLink}>Chính sách bảo mật</Text>
-            </Text>
-          </View>
+            <Text style={styles.label}>Mật khẩu</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="lock" size={20} color={theme.colors.textSecondary} />
+              <TextInput
+                value={password}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="Ít nhất 6 ký tự"
+                placeholderTextColor={theme.colors.textSecondary}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
+                <MaterialIcons name={showPassword ? 'visibility' : 'visibility-off'} size={20} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
 
-          {/* Register Button */}
-          <TouchableOpacity
-            style={[styles.registerButton, loading && styles.registerButtonDisabled]}
-            onPress={handleRegister}
-            disabled={loading}
-            activeOpacity={0.8}
-          >
-            {loading ? (
-              <Text style={styles.registerButtonText}>Đang đăng ký...</Text>
-            ) : (
-              <Text style={styles.registerButtonText}>Đăng Ký</Text>
-            )}
-          </TouchableOpacity>
+            <Text style={styles.label}>Xác nhận mật khẩu</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="lock-outline" size={20} color={theme.colors.textSecondary} />
+              <TextInput
+                value={confirmPassword}
+                onChangeText={(value) => {
+                  setConfirmPassword(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="Nhập lại mật khẩu"
+                placeholderTextColor={theme.colors.textSecondary}
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TouchableOpacity onPress={() => setShowConfirmPassword((prev) => !prev)} hitSlop={8}>
+                <MaterialIcons
+                  name={showConfirmPassword ? 'visibility' : 'visibility-off'}
+                  size={20}
+                  color={theme.colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
 
-          {/* Login Link */}
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>Đã có tài khoản? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.loginLink}>Đăng nhập</Text>
+            <TouchableOpacity
+              style={styles.termsRow}
+              onPress={() => {
+                setAcceptTerms((prev) => !prev);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+              activeOpacity={0.8}
+            >
+              <MaterialIcons
+                name={acceptTerms ? 'check-box' : 'check-box-outline-blank'}
+                size={20}
+                color={acceptTerms ? theme.colors.primary : theme.colors.textSecondary}
+              />
+              <Text style={styles.termsText}>Tôi đồng ý với điều khoản sử dụng và chính sách bảo mật.</Text>
             </TouchableOpacity>
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <TouchableOpacity
+              style={[styles.submitButton, (!formValid || isSubmitting) && styles.submitDisabled]}
+              onPress={handleRegister}
+              disabled={!formValid || isSubmitting}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.submitText}>{isSubmitting ? 'Đang tạo tài khoản...' : 'Đăng ký'}</Text>
+              {!isSubmitting && <MaterialIcons name="arrow-forward" size={18} color={theme.colors.surface} />}
+            </TouchableOpacity>
+
+            <View style={styles.switchRow}>
+              <Text style={styles.switchText}>Đã có tài khoản?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Login')} hitSlop={8}>
+                <Text style={styles.switchLink}>Đăng nhập</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -210,98 +261,114 @@ const createStyles = (theme: any) =>
     },
     container: {
       flex: 1,
+    },
+    content: {
       paddingHorizontal: theme.spacing.lg,
-      justifyContent: 'center',
+      paddingVertical: theme.spacing.lg,
+      gap: theme.spacing.lg,
     },
     header: {
-      alignItems: 'center',
-      marginBottom: theme.spacing.xl,
-    },
-    logoContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
       gap: theme.spacing.sm,
-      marginBottom: theme.spacing.sm,
     },
-    logoText: {
+    logo: {
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.primaryContainer,
+    },
+    title: {
       fontFamily: theme.typography.families.display,
-      fontSize: theme.typography.sizes.xxl,
+      fontSize: theme.typography.sizes.xl,
       fontWeight: theme.typography.weights.bold,
       color: theme.colors.text,
-      letterSpacing: -0.5,
     },
     subtitle: {
       fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.md,
+      fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
+      lineHeight: 20,
     },
     form: {
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
-    inputContainer: {
+    label: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.text,
+      fontWeight: theme.typography.weights.medium,
+    },
+    inputWrap: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
       backgroundColor: theme.colors.surfaceVariant,
       borderRadius: theme.borderRadius.lg,
       paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderWidth: 1,
-      borderColor: theme.colors.borderSubtle,
+      paddingVertical: 14,
     },
     input: {
       flex: 1,
       fontFamily: theme.typography.families.body,
       fontSize: theme.typography.sizes.md,
       color: theme.colors.text,
-      paddingVertical: 4,
     },
-    termsContainer: {
+    termsRow: {
       flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
+      alignItems: 'flex-start',
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.xs,
     },
     termsText: {
+      flex: 1,
       fontFamily: theme.typography.families.body,
       fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
-      flex: 1,
+      lineHeight: 20,
     },
-    termsLink: {
-      color: theme.colors.primary,
-      fontWeight: theme.typography.weights.medium,
-    },
-    registerButton: {
-      backgroundColor: theme.colors.primary,
-      paddingVertical: 16,
-      borderRadius: theme.borderRadius.lg,
-      alignItems: 'center',
-      ...theme.shadows.medium,
-    },
-    registerButtonDisabled: {
-      opacity: 0.6,
-    },
-    registerButtonText: {
+    errorText: {
       fontFamily: theme.typography.families.body,
+      color: theme.colors.error,
+      fontSize: theme.typography.sizes.sm,
+    },
+    submitButton: {
+      marginTop: theme.spacing.sm,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: 14,
+    },
+    submitDisabled: {
+      opacity: 0.55,
+    },
+    submitText: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.surface,
       fontSize: theme.typography.sizes.md,
       fontWeight: theme.typography.weights.bold,
-      color: theme.colors.surface,
-      letterSpacing: 0.3,
     },
-    loginContainer: {
+    switchRow: {
+      marginTop: theme.spacing.sm,
       flexDirection: 'row',
+      alignItems: 'center',
       justifyContent: 'center',
-      marginTop: theme.spacing.md,
+      gap: theme.spacing.xs,
     },
-    loginText: {
+    switchText: {
       fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
-    },
-    loginLink: {
-      fontFamily: theme.typography.families.body,
       fontSize: theme.typography.sizes.sm,
+    },
+    switchLink: {
+      fontFamily: theme.typography.families.body,
       color: theme.colors.primary,
+      fontSize: theme.typography.sizes.sm,
       fontWeight: theme.typography.weights.bold,
     },
   });

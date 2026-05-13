@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, View, ViewStyle } from 'react-native';
+import { Animated, ViewStyle } from 'react-native';
 
 interface StaggerInProps {
   children: React.ReactNode;

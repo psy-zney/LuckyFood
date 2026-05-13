@@ -8,6 +8,7 @@ import {
   Animated,
   Easing,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getDb } from '../database/db-service';
@@ -17,6 +18,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../navigation/AppNavigator';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStore } from '../store';
+import * as Haptics from 'expo-haptics';
 
 type Props = {
   navigation: BottomTabNavigationProp<RootTabParamList, 'RandomWheel'>;
@@ -36,7 +38,7 @@ export default function RandomWheelScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const [slotText, setSlotText] = useState('?');
   const theme = useTheme();
-  const { incrementPopularity, addMeal } = useAppStore();
+  const { incrementPopularity, addMeal, toggleFavorite, user } = useAppStore();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -109,6 +111,8 @@ export default function RandomWheelScreen({ navigation }: Props) {
     slotOpacity.setValue(1);
     slotScale.setValue(0.6);
     spinRotation.setValue(0);
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     // Button press effect
     Animated.sequence([
@@ -185,6 +189,8 @@ export default function RandomWheelScreen({ navigation }: Props) {
           setResult(food);
           setLoading(false);
 
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
           // Animate result card
           Animated.parallel([
             Animated.timing(resultAnim, {
@@ -257,10 +263,10 @@ export default function RandomWheelScreen({ navigation }: Props) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <MaterialIcons name="casino" size={28} color={theme.colors.primary} />
-          <Text style={styles.headerTitle}>Xúc Xắc May Mắn</Text>
+          <MaterialIcons name="auto-awesome" size={28} color={theme.colors.primary} />
+          <Text style={styles.headerTitle}>Nhận Tín Hiệu Vũ Trụ</Text>
         </View>
-        <Text style={styles.headerSubtitle}>Chạm để khám phá món ăn hôm nay 💕</Text>
+        <Text style={styles.headerSubtitle}>Vũ trụ đang gọi tên món ăn nào? ✨</Text>
       </View>
 
       <View style={styles.mainCanvas}>
@@ -412,8 +418,13 @@ export default function RandomWheelScreen({ navigation }: Props) {
               <TouchableOpacity
                 style={styles.favButton}
                 onPress={() => {
-                  // Add to favourites logic here
-                  console.log('Add to favourites:', result.id);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  if (user.uid) {
+                    toggleFavorite(result.id);
+                    Alert.alert('Thành công', user.favoriteFoodIds.includes(result.id) ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích');
+                  } else {
+                    Alert.alert('Thông báo', 'Vui lòng đăng nhập để sử dụng tính năng này');
+                  }
                 }}
                 activeOpacity={0.8}
               >
@@ -671,16 +682,5 @@ const createStyles = (theme: any) =>
       borderWidth: 1,
       borderColor: theme.colors.borderSubtle,
       ...theme.shadows.medium,
-    },
-    footer: {
-      alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      marginTop: theme.spacing.md,
-    },
-    footerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
-      color: theme.colors.textSecondary,
-      textAlign: 'center',
     },
   });

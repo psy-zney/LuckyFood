@@ -1,35 +1,132 @@
-# Dự án "Hôm nay ăn gì?"
+# LuckyFood
 
-## Giới thiệu
-"Hôm nay ăn gì?" là một ứng dụng di động được xây dựng trên nền tảng **React Native**, hướng tới việc giải quyết câu hỏi "đau đầu" nhất mỗi ngày của nhiều người. Ứng dụng cung cấp các tính năng từ việc ngẫu nhiên chọn món ăn, tìm kiếm món ăn theo nguyên liệu có sẵn, đến việc theo dõi "streak" nấu ăn mỗi ngày.
+Mobile app built with Expo + React Native to help users decide what to cook, explore dishes, and track cooking habits.
 
-## Mục tiêu (Dựa trên Use Case)
-### Phía Khách hàng (User)
-- **Quay random "hôm nay ăn gì":** Tính năng cốt lõi giúp đưa ra quyết định nhanh chóng.
-- **Nhập nguyên liệu để gợi ý món ăn:** Tận dụng nguyên liệu thừa trong tủ lạnh để tìm ra công thức phù hợp.
-- **Lựa công thức nấu ăn:** Tìm và xem chi tiết công thức (bao gồm nguyên liệu, cách làm).
-- **Streak nấu ăn:** Tính năng gamification giúp người dùng có động lực nấu ăn mỗi ngày.
-- **Đăng nhập/Đăng ký:** Cho phép (không bắt buộc) để đồng bộ hóa dữ liệu (streak, món ăn yêu thích) lên cloud.
-
-### Phía Quản trị viên (Admin)
-- **Quản lý thực đơn (Thêm/Xóa/Sửa đồ ăn):** Đảm bảo cơ sở dữ liệu món ăn luôn phong phú và chính xác.
-- **Thống kê (Xem số lượng thành viên):** Theo dõi sự phát triển của nền tảng.
-
-## Hướng dẫn đọc tài liệu (Documentation)
-Để hiểu rõ hơn về cách thức hoạt động và tham gia vào dự án, vui lòng đọc các tài liệu `.md` trong thư mục `.docs`:
-
-### 1. Kiến trúc hệ thống
-- Tham khảo `ARCHITECTURE.md` trong thư mục `.docs/architecture/` để nắm rõ luồng dữ liệu giữa React Native, Firebase và SQLite.
-
-### 2. Quy định và Triển khai
-- **Quy tắc chung:** Đọc `CONVENTIONS.md` trong thư mục `.docs/rules/` để hiểu về coding convention, cách quản lý branch và versioning.
-- **Triển khai (Deployment):** Đọc `DEPLOYMENT.md` trong thư mục `.docs/rules/` để nắm quy trình đưa app lên store (App Store/Google Play).
-
-### 3. Nhiệm vụ từng Role (Vai trò)
-Mỗi thành viên trong dự án sẽ có các mô tả công việc cụ thể. Vui lòng vào thư mục `.docs/roles/` để đọc file mô tả tương ứng với vị trí của bạn:
-- `UI_DESIGNER.md`: Dành cho bộ phận thiết kế giao diện (UI/UX).
-- `FRONTEND_DEV.md`: Dành cho lập trình viên React Native.
-- `BACKEND_DEV.md`: Dành cho người phụ trách cấu hình Firebase và Database.
+Ứng dụng di động xây dựng bằng Expo + React Native giúp người dùng chọn món ăn mỗi ngày, khám phá món mới và theo dõi thói quen nấu ăn.
 
 ---
-*Dự án đang trong giai đoạn khởi tạo cấu trúc ban đầu.*
+
+## 1) Key Features / Tính năng chính
+
+### User
+- Browse and search dishes
+- Ingredient-based filtering
+- Random dish picker (dice/wheel flow)
+- Favorites and meal history
+- Daily streak tracking
+- Email/password login and Google login
+
+### Admin
+- Role-based access to Admin Dashboard
+- Basic dataset overview (foods, ingredients, links)
+- Isolated admin route from user navigation flow
+
+---
+
+## 2) Tech Stack
+
+- **Framework:** React Native (Expo SDK 54)
+- **Language:** TypeScript
+- **Navigation:** React Navigation (Native Stack + Bottom Tabs)
+- **State:** Zustand
+- **Database:** SQLite (expo-sqlite)
+- **Auth:** Local account flow + Google Sign-In
+
+---
+
+## 3) Project Structure
+
+```text
+src/
+  navigation/            # App routing and role-based stacks
+  screens/               # User/Admin screens
+  database/              # SQLite service + seed JSON
+  store/                 # Zustand slices
+  utils/                 # Theme/Auth/providers/helpers
+  components/            # Shared UI and animations
+```
+
+Important files:
+- `src/database/db-service.ts` — schema + seed loader
+- `src/database/initial_seed_ctna.json` — initial dataset
+- `src/navigation/AppNavigator.tsx` — role-based navigation
+
+---
+
+## 4) Prerequisites / Yêu cầu môi trường
+
+- Node.js 18+ (recommended)
+- npm 9+
+- Android Studio (for Android build) and/or Xcode (for iOS build)
+- Expo CLI via `npx expo`
+
+---
+
+## 5) Install & Run / Cài đặt và chạy
+
+```bash
+npm install
+npm run start
+```
+
+### Native run
+
+```bash
+# Android
+npx expo run:android
+
+# iOS (macOS only)
+npx expo run:ios
+```
+
+---
+
+## 6) Seed Data / Dữ liệu ban đầu
+
+- Initial database data is loaded from:
+  - `src/database/initial_seed_ctna.json`
+- Seeding runs when app is first launched (`isFirstLaunch = true` in store settings).
+
+If you need to reseed:
+1. Clear app data / reinstall app, or
+2. Reset first-launch state in local storage/store.
+
+Nếu cần nạp lại dữ liệu:
+1. Xóa dữ liệu app / cài lại app, hoặc
+2. Reset cờ first-launch trong store.
+
+---
+
+## 7) Authentication & Roles / Xác thực và phân quyền
+
+- Local demo accounts:
+  - `admin` role routes to **Admin Dashboard**
+  - `user` role routes to **User Tabs**
+- Google login is mapped to `user` role by default.
+
+---
+
+## 8) Google Sign-In Notes
+
+Ensure these are configured correctly:
+- iOS bundle id and OAuth iOS client
+- Android package name + SHA-1/SHA-256 + OAuth Android/Web client
+- Rebuild native app after any auth config update
+
+---
+
+## 9) Scripts
+
+```bash
+npm run start     # Start Expo dev server
+npm run android   # Build/run Android
+npm run ios       # Build/run iOS
+npm run web       # Run web target
+```
+
+---
+
+## 10) License
+
+Private project for internal development.
+

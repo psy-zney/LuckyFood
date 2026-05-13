@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, StatusBar, ActivityIndicator, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, StatusBar, ActivityIndicator, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -407,16 +407,5 @@ const createStyles = (theme: any) =>
       color: theme.colors.textSecondary,
       textAlign: 'center',
       lineHeight: 24,
-    },
-    footer: {
-      alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      marginTop: theme.spacing.md,
-    },
-    footerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
-      color: theme.colors.textSecondary,
-      textAlign: 'center',
     },
   });

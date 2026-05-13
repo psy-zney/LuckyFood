@@ -1,100 +1,114 @@
-import React, { useState, useRef } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  StatusBar,
+  Alert,
   KeyboardAvoidingView,
   Platform,
-  Alert,
-  Animated,
-  Easing,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '../utils/ThemeProvider';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useAppStore } from '../store';
+import { getDemoAccounts, isValidEmail, loginLocalAccount, normalizeEmail } from '../utils/localAuth';
+import { useAuth } from '../utils/AuthProvider';
 
 type Props = {
   navigation: any;
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function LoginScreen({ navigation }: Props) {
   const theme = useTheme();
   const { setUser } = useAppStore();
+  const { loginWithGoogle, isLoading: authLoading } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Animation values
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideUpAnim = useRef(new Animated.Value(30)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
+  const demoAccounts = useMemo(() => getDemoAccounts(), []);
+  const emailTrimmed = normalizeEmail(email);
+  const formValid = emailTrimmed.length > 0 && password.length > 0;
 
-  // Entry animation
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideUpAnim, {
-        toValue: 0,
-        tension: 100,
-        friction: 8,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
+  const closeAuthFlow = () => {
+    const parent = navigation.getParent?.();
+    if (parent?.canGoBack?.()) {
+      parent.goBack();
+      return;
+    }
+    navigation.goBack();
+  };
+
+  const applyDemoAccount = (account: { email: string; password: string }) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setEmail(account.email);
+    setPassword(account.password);
+    setError(null);
+  };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Lỗi', 'Vui lòng nhập email và mật khẩu');
+    if (isSubmitting) return;
+
+    if (!formValid) {
+      setError('Vui lòng nhập đầy đủ email và mật khẩu.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
-    setLoading(true);
+    if (!isValidEmail(emailTrimmed)) {
+      setError('Email không hợp lệ.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
 
-    // Simulate login - trong thực tế sẽ gọi API
-    setTimeout(() => {
-      setUser({
-        uid: 'user-' + Date.now(),
-        displayName: email.split('@')[0],
-        email: email,
-        avatarUrl: null,
-        role: 'user',
-        currentStreak: 0,
-        highestStreak: 0,
-        lastCookedDate: null,
-        favoriteFoodIds: [],
-      });
+    setIsSubmitting(true);
+    setError(null);
 
-      setLoading(false);
-      Alert.alert('Thành công', 'Đăng nhập thành công!');
-      navigation.replace('Home');
-    }, 1000);
+    await sleep(300);
+    const account = loginLocalAccount(emailTrimmed, password);
+
+    if (!account) {
+      setIsSubmitting(false);
+      setError('Email hoặc mật khẩu không đúng.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
+
+    setUser({
+      uid: account.id,
+      displayName: account.displayName,
+      email: account.email,
+      avatarUrl: null,
+      role: account.role,
+      currentStreak: 0,
+      highestStreak: 0,
+      lastCookedDate: null,
+      favoriteFoodIds: [],
+    });
+
+    setIsSubmitting(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Đăng nhập thành công', `Xin chào ${account.displayName}!`);
+    closeAuthFlow();
   };
 
-  const handleButtonPressIn = () => {
-    Animated.spring(buttonScale, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleButtonPressOut = () => {
-    Animated.spring(buttonScale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
+  const handleGoogleLogin = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setError(null);
+    await loginWithGoogle();
+    if (useAppStore.getState().user.uid) {
+      closeAuthFlow();
+    }
   };
 
   const styles = createStyles(theme);
@@ -102,133 +116,115 @@ export default function LoginScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} backgroundColor={theme.colors.background} />
-
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <Animated.View
-          style={{
-            opacity: fadeAnim,
-            transform: [{ translateY: slideUpAnim }],
-          }}
-        >
-          {/* Header */}
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <MaterialIcons name="restaurant" size={48} color={theme.colors.primary} />
-              <Text style={styles.logoText}>LuckyFood 💕</Text>
+            <View style={styles.logo}>
+              <MaterialIcons name="restaurant-menu" size={32} color={theme.colors.primary} />
             </View>
-            <Text style={styles.subtitle}>Chào mừng trở lại!</Text>
+            <Text style={styles.title}>Đăng nhập LuckyFood</Text>
+            <Text style={styles.subtitle}>Đăng nhập để lưu món yêu thích và lịch sử nấu ăn.</Text>
           </View>
 
-          {/* Form */}
           <View style={styles.form}>
-            {/* Email Input */}
-            <Animated.View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: emailFocused ? theme.colors.primary : theme.colors.borderSubtle,
-                  transform: [{ scale: emailFocused ? 1.02 : 1 }],
-                },
-              ]}
-            >
-              <MaterialIcons name="email" size={22} color={theme.colors.textSecondary} />
+            <Text style={styles.label}>Email</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="email" size={20} color={theme.colors.textSecondary} />
               <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor={theme.colors.textSecondary}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(value) => {
+                  setEmail(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.colors.textSecondary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
+                returnKeyType="next"
               />
-            </Animated.View>
+            </View>
 
-            {/* Password Input */}
-            <Animated.View
-              style={[
-                styles.inputContainer,
-                {
-                  borderColor: passwordFocused ? theme.colors.primary : theme.colors.borderSubtle,
-                  transform: [{ scale: passwordFocused ? 1.02 : 1 }],
-                },
-              ]}
-            >
-              <MaterialIcons name="lock" size={22} color={theme.colors.textSecondary} />
+            <Text style={styles.label}>Mật khẩu</Text>
+            <View style={styles.inputWrap}>
+              <MaterialIcons name="lock" size={20} color={theme.colors.textSecondary} />
               <TextInput
-                style={styles.input}
-                placeholder="Mật khẩu"
-                placeholderTextColor={theme.colors.textSecondary}
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(value) => {
+                  setPassword(value);
+                  if (error) setError(null);
+                }}
+                style={styles.input}
+                placeholder="Nhập mật khẩu"
+                placeholderTextColor={theme.colors.textSecondary}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
-                onFocus={() => setPasswordFocused(true)}
-                onBlur={() => setPasswordFocused(false)}
+                returnKeyType="done"
+                onSubmitEditing={handleLogin}
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialIcons
-                  name={showPassword ? 'visibility' : 'visibility-off'}
-                  size={22}
-                  color={theme.colors.textSecondary}
-                />
+              <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)} hitSlop={8}>
+                <MaterialIcons name={showPassword ? 'visibility' : 'visibility-off'} size={20} color={theme.colors.textSecondary} />
               </TouchableOpacity>
-            </Animated.View>
+            </View>
 
-            {/* Forgot Password */}
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <TouchableOpacity
+              style={[styles.submitButton, (!formValid || isSubmitting) && styles.submitDisabled]}
+              onPress={handleLogin}
+              disabled={!formValid || isSubmitting}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.submitText}>{isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}</Text>
+              {!isSubmitting && <MaterialIcons name="arrow-forward" size={18} color={theme.colors.surface} />}
             </TouchableOpacity>
 
-            {/* Login Button */}
-            <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>HOẶC</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.googleButton, authLoading && styles.submitDisabled]}
+              onPress={handleGoogleLogin}
+              disabled={authLoading}
+              activeOpacity={0.85}
+            >
+              <View style={styles.googleIconContainer}>
+                <FontAwesome name="google" size={20} color="#EA4335" />
+              </View>
+              <Text style={styles.googleButtonText}>{authLoading ? 'Đang kết nối...' : 'Tiếp tục với Google'}</Text>
+            </TouchableOpacity>
+
+            <View style={styles.switchRow}>
+              <Text style={styles.switchText}>Chưa có tài khoản?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')} hitSlop={8}>
+                <Text style={styles.switchLink}>Đăng ký ngay</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.demoSection}>
+            <Text style={styles.demoTitle}>Tài khoản demo</Text>
+            {demoAccounts.map((account) => (
               <TouchableOpacity
-                style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-                onPress={handleLogin}
-                onPressIn={handleButtonPressIn}
-                onPressOut={handleButtonPressOut}
-                disabled={loading}
+                key={`${account.role}-${account.email}`}
+                style={styles.demoItem}
+                onPress={() => applyDemoAccount(account)}
                 activeOpacity={0.8}
               >
-                {loading ? (
-                  <Text style={styles.loginButtonText}>Đang đăng nhập...</Text>
-                ) : (
-                  <Text style={styles.loginButtonText}>Đăng Nhập</Text>
-                )}
+                <View>
+                  <Text style={styles.demoRole}>{account.role === 'admin' ? 'ADMIN' : 'USER'}</Text>
+                  <Text style={styles.demoValue}>{account.email}</Text>
+                </View>
+                <Text style={styles.demoPass}>{account.password}</Text>
               </TouchableOpacity>
-            </Animated.View>
-
-            {/* Register Link */}
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Chưa có tài khoản? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.registerLink}>Đăng ký ngay</Text>
-              </TouchableOpacity>
-            </View>
+            ))}
           </View>
-
-          {/* Social Login */}
-          <View style={styles.socialContainer}>
-            <Text style={styles.socialText}>Hoặc đăng nhập với</Text>
-            <View style={styles.socialButtons}>
-              <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                <MaterialIcons name="facebook" size={24} color="#1877F2" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                <MaterialIcons name="public" size={24} color="#DB4437" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton} activeOpacity={0.8}>
-                <MaterialIcons name="apple" size={24} color={theme.colors.text} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Animated.View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -242,117 +238,184 @@ const createStyles = (theme: any) =>
     },
     container: {
       flex: 1,
+    },
+    content: {
       paddingHorizontal: theme.spacing.lg,
-      justifyContent: 'center',
+      paddingVertical: theme.spacing.lg,
+      gap: theme.spacing.lg,
     },
     header: {
-      alignItems: 'center',
-      marginBottom: theme.spacing.xl,
-    },
-    logoContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
       gap: theme.spacing.sm,
-      marginBottom: theme.spacing.sm,
     },
-    logoText: {
+    logo: {
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: theme.colors.primaryContainer,
+    },
+    title: {
       fontFamily: theme.typography.families.display,
-      fontSize: theme.typography.sizes.xxl,
+      fontSize: theme.typography.sizes.xl,
       fontWeight: theme.typography.weights.bold,
       color: theme.colors.text,
-      letterSpacing: -0.5,
     },
     subtitle: {
       fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.md,
+      fontSize: theme.typography.sizes.sm,
       color: theme.colors.textSecondary,
+      lineHeight: 20,
     },
     form: {
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
-    inputContainer: {
+    label: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.text,
+      fontWeight: theme.typography.weights.medium,
+    },
+    inputWrap: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
       backgroundColor: theme.colors.surfaceVariant,
       borderRadius: theme.borderRadius.lg,
       paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderWidth: 1,
-      borderColor: theme.colors.borderSubtle,
+      paddingVertical: 14,
     },
     input: {
       flex: 1,
       fontFamily: theme.typography.families.body,
       fontSize: theme.typography.sizes.md,
       color: theme.colors.text,
-      paddingVertical: 4,
     },
-    forgotPassword: {
-      alignSelf: 'flex-end',
-    },
-    forgotPasswordText: {
+    errorText: {
       fontFamily: theme.typography.families.body,
+      color: theme.colors.error,
       fontSize: theme.typography.sizes.sm,
-      color: theme.colors.primary,
-      fontWeight: theme.typography.weights.medium,
     },
-    loginButton: {
-      backgroundColor: theme.colors.primary,
-      paddingVertical: 16,
-      borderRadius: theme.borderRadius.lg,
+    submitButton: {
+      marginTop: theme.spacing.sm,
+      flexDirection: 'row',
       alignItems: 'center',
-      ...theme.shadows.medium,
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: 14,
     },
-    loginButtonDisabled: {
-      opacity: 0.6,
+    submitDisabled: {
+      opacity: 0.55,
     },
-    loginButtonText: {
+    submitText: {
       fontFamily: theme.typography.families.body,
+      color: theme.colors.surface,
       fontSize: theme.typography.sizes.md,
       fontWeight: theme.typography.weights.bold,
-      color: theme.colors.surface,
-      letterSpacing: 0.3,
     },
-    registerContainer: {
+    divider: {
       flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: theme.spacing.md,
-    },
-    registerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.sm,
-      color: theme.colors.textSecondary,
-    },
-    registerLink: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.sm,
-      color: theme.colors.primary,
-      fontWeight: theme.typography.weights.bold,
-    },
-    socialContainer: {
-      marginTop: theme.spacing.xl,
       alignItems: 'center',
+      marginVertical: theme.spacing.sm,
       gap: theme.spacing.md,
     },
-    socialText: {
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: theme.colors.borderSubtle,
+    },
+    dividerText: {
       fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.sm,
+      fontSize: 10,
+      fontWeight: '700',
       color: theme.colors.textSecondary,
-      marginBottom: theme.spacing.sm,
+      letterSpacing: 1,
     },
-    socialButtons: {
+    googleButton: {
       flexDirection: 'row',
-      gap: theme.spacing.md,
-    },
-    socialButton: {
-      width: 56,
-      height: 56,
-      borderRadius: theme.borderRadius.round,
-      backgroundColor: theme.colors.surfaceVariant,
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.borderSubtle,
+      borderRadius: theme.borderRadius.lg,
+      paddingVertical: 12,
+      gap: theme.spacing.md,
+    },
+    googleIconContainer: {
+      width: 24,
+      height: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    googleButtonText: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.text,
+      fontSize: theme.typography.sizes.md,
+      fontWeight: theme.typography.weights.semiBold,
+    },
+    switchRow: {
+      marginTop: theme.spacing.sm,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: theme.spacing.xs,
+    },
+    switchText: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.textSecondary,
+      fontSize: theme.typography.sizes.sm,
+    },
+    switchLink: {
+      fontFamily: theme.typography.families.body,
+      color: theme.colors.primary,
+      fontSize: theme.typography.sizes.sm,
+      fontWeight: theme.typography.weights.bold,
+    },
+    demoSection: {
+      gap: theme.spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.borderSubtle,
+      paddingTop: theme.spacing.md,
+      marginTop: theme.spacing.sm,
+    },
+    demoTitle: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
+      fontWeight: theme.typography.weights.medium,
+    },
+    demoItem: {
+      borderWidth: 1,
+      borderColor: theme.colors.borderSubtle,
+      borderRadius: theme.borderRadius.md,
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    demoRole: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.xs,
+      color: theme.colors.primary,
+      fontWeight: theme.typography.weights.bold,
+      textTransform: 'uppercase',
+    },
+    demoValue: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.text,
+    },
+    demoPass: {
+      fontFamily: theme.typography.families.body,
+      fontSize: theme.typography.sizes.sm,
+      color: theme.colors.textSecondary,
     },
   });

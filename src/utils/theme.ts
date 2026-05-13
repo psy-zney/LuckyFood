@@ -1,5 +1,3 @@
-import { useColorScheme } from 'react-native';
-
 // Font family - Quicksand for lovely, feminine look
 export const fontFamily = {
   display: 'Quicksand',

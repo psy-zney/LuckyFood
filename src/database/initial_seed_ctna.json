@@ -1,0 +1,2683 @@
+{
+  "meta": {
+    "name": "LuckyFood Initial Seed from CTNA + CTNA2",
+    "generatedAt": "2026-05-13T11:51:16.298777",
+    "language": "vi-VN",
+    "sources": [
+      {
+        "file": "CTNA.pdf",
+        "pages": "1-5 table of contents"
+      },
+      {
+        "file": "CTNA2.pdf",
+        "pages": "2 feature index (scan)"
+      }
+    ],
+    "notes": [
+      "Database stores UTF-8 text.",
+      "JSON is normalized for compatibility."
+    ]
+  },
+  "foods": [
+    {
+      "id": "food-001",
+      "name": "Thit kho nuoc dua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-002",
+      "name": "Cua rang me chua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-003",
+      "name": "Ca cuon thit nam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-004",
+      "name": "Goi mit tom thit",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-005",
+      "name": "Thit dong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-006",
+      "name": "Cua bay xao gung hanh",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-007",
+      "name": "Nem hai san",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-008",
+      "name": "Com thap cam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-009",
+      "name": "Nem ca",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-010",
+      "name": "Oc len xao dua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-011",
+      "name": "Lau hai san",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-012",
+      "name": "Canh ga chien nuoc mam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-013",
+      "name": "Ca bon tam ruou bo lo",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-014",
+      "name": "Ca nau dam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-015",
+      "name": "Bo cuon la cai",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-016",
+      "name": "Canh suon chua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-017",
+      "name": "Ca sot hap trung",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-018",
+      "name": "Cha ca",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-019",
+      "name": "To chim",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-020",
+      "name": "Com chay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "chay",
+      "prepTime": 25
+    },
+    {
+      "id": "food-021",
+      "name": "Tom chien khoai",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-022",
+      "name": "Ngo xao tom",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-023",
+      "name": "Canh hen nau chua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-024",
+      "name": "Bo sot gan",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-025",
+      "name": "Kim tien ke",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-026",
+      "name": "Thit bo xao cu sen",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-027",
+      "name": "Bo ngu vi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-028",
+      "name": "Cha gio mini",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-029",
+      "name": "Ca bao xoai tam bot ran",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-030",
+      "name": "Muc hap gung",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-031",
+      "name": "Muc chien gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-032",
+      "name": "Khoai tay chien gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-033",
+      "name": "Muc tron bong cai",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-034",
+      "name": "Ca mu chung ky lan",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-035",
+      "name": "Tom tam bot",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-036",
+      "name": "Muc xao sa te",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-037",
+      "name": "Tom hum luoc",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-038",
+      "name": "Muc ngu vi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-039",
+      "name": "Ca hoi sot chua ngot",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-040",
+      "name": "Muc nuong toi ot",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-041",
+      "name": "Muc hoa cuc",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-042",
+      "name": "Thit ba roi cuon ca hoi nuong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-043",
+      "name": "Trung cut bao quan",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-044",
+      "name": "Hoa ngu sac",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-045",
+      "name": "Ca hoi nhoi khoai tay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-046",
+      "name": "Goi buoi chay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "chay",
+      "prepTime": 25
+    },
+    {
+      "id": "food-047",
+      "name": "Rau xao thap cam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-048",
+      "name": "Ca hoi xao cai thia",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-049",
+      "name": "Mi xao gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-050",
+      "name": "Sake chien gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-051",
+      "name": "Rau sot cay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-052",
+      "name": "Cha nuong chay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "chay",
+      "prepTime": 35
+    },
+    {
+      "id": "food-053",
+      "name": "Ca tim chien",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-054",
+      "name": "Bun xao chay",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-055",
+      "name": "Chuoi boc tau hu ky",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-056",
+      "name": "Luon chien gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-057",
+      "name": "Luon xao sa ot",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-058",
+      "name": "Bo cau quay da gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-059",
+      "name": "Cha luon",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-060",
+      "name": "Van than chien gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-061",
+      "name": "Chuoi hap mat dua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-062",
+      "name": "Xoi nuong cuon",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 35
+    },
+    {
+      "id": "food-063",
+      "name": "Ca nuc hap",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-064",
+      "name": "Dua chuoi chat",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-065",
+      "name": "Tom kho danh",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-066",
+      "name": "Cuon diep",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-067",
+      "name": "Oc nhoi nau chuoi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-068",
+      "name": "Chuoi sot caramen",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "nuoc",
+      "prepTime": 25
+    },
+    {
+      "id": "food-069",
+      "name": "Thit luoc giam tuong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-070",
+      "name": "Canh chua bong so dua ca ro dong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-071",
+      "name": "Ech xao la cach",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-072",
+      "name": "Ca tai tuong chien xu",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-073",
+      "name": "Goi bau ca loc nuong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-074",
+      "name": "Vit nau chao",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-075",
+      "name": "Ca cuon bun",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-076",
+      "name": "Bun kho xao gion",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 35
+    },
+    {
+      "id": "food-077",
+      "name": "Luoi vit rang muoi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-078",
+      "name": "Cut tiem ngu qua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-079",
+      "name": "Vit quay tron mang",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-080",
+      "name": "Tom rang ngu vi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-081",
+      "name": "Ca ho kho boi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-082",
+      "name": "Chan ga nuong ngu vi",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-083",
+      "name": "Bong cai boc cha",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-084",
+      "name": "Mi ruoi ca chua sot",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-085",
+      "name": "Mi xao tom",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-086",
+      "name": "Mam loc",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-087",
+      "name": "Mi xao thit ga hat dieu",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-088",
+      "name": "Lau rau",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-089",
+      "name": "Dua kho ca chua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-090",
+      "name": "Mam du du",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-091",
+      "name": "Lau de",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-092",
+      "name": "Nem ga kieu Trung Hoa",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-093",
+      "name": "Canh ga chien bo",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-094",
+      "name": "Hoa bi no",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-095",
+      "name": "Com thai cuc",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-096",
+      "name": "Canh mang nau chan gio",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-097",
+      "name": "Ga nau dong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-098",
+      "name": "Muop dang nhoi thit",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-099",
+      "name": "Tai lon ngam giam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-100",
+      "name": "Bun rieu cua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "bun-pho",
+      "prepTime": 25
+    },
+    {
+      "id": "food-101",
+      "name": "Ga chien la dua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-102",
+      "name": "Lau thit bo",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-103",
+      "name": "Hoa kim cham xao",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-104",
+      "name": "Cha gio uyen uong",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-105",
+      "name": "Bo nuong chanh va bo",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 35
+    },
+    {
+      "id": "food-106",
+      "name": "Hoa cai xao nam chao",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-107",
+      "name": "Bong he xao so lua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-108",
+      "name": "Lau ca qua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-109",
+      "name": "Mam Hue xao thit",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-110",
+      "name": "Nom muop dang",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-111",
+      "name": "Dau phu mam tom",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "chay",
+      "prepTime": 25
+    },
+    {
+      "id": "food-112",
+      "name": "Mam ca com tron dua",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-113",
+      "name": "Lau mam",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-114",
+      "name": "Hoa ly xao thit bo",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-115",
+      "name": "Hoa bi xao ngheu",
+      "description": "Reference dish from CTNA.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-116",
+      "name": "Com noi doi da nang",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-117",
+      "name": "Ngu coc dinh duong",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-118",
+      "name": "Com chay noi doi",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "chay",
+      "prepTime": 25
+    },
+    {
+      "id": "food-119",
+      "name": "Chao co ban",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-120",
+      "name": "Sup rau cu",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-121",
+      "name": "Chao dac thit bam",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 30
+    },
+    {
+      "id": "food-122",
+      "name": "Mon hap tong hop",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-123",
+      "name": "Mon ham bo duong",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 45
+    },
+    {
+      "id": "food-124",
+      "name": "Lam banh tai nha",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "banh",
+      "prepTime": 25
+    },
+    {
+      "id": "food-125",
+      "name": "Mon chien gion nhanh",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    },
+    {
+      "id": "food-126",
+      "name": "Sua chua nha lam",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "nuoc",
+      "prepTime": 25
+    },
+    {
+      "id": "food-127",
+      "name": "Mon thu cong sang tao",
+      "description": "Reference dish from CTNA2.pdf",
+      "imageUrl": "",
+      "category": "com",
+      "prepTime": 25
+    }
+  ],
+  "ingredients": [
+    {
+      "id": "ing-1",
+      "name": "Thit heo",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-2",
+      "name": "Thit bo",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-3",
+      "name": "Thit ga",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-4",
+      "name": "Trung",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-5",
+      "name": "Tom",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-6",
+      "name": "Ca",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-11",
+      "name": "Dau hu",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-12",
+      "name": "Bun/Pho",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-13",
+      "name": "Com",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-14",
+      "name": "Mi",
+      "icon": "??",
+      "type": "main"
+    },
+    {
+      "id": "ing-7",
+      "name": "Rau xanh",
+      "icon": "??",
+      "type": "rare"
+    },
+    {
+      "id": "ing-8",
+      "name": "Ca rot",
+      "icon": "??",
+      "type": "rare"
+    },
+    {
+      "id": "ing-9",
+      "name": "Khoai tay",
+      "icon": "??",
+      "type": "rare"
+    },
+    {
+      "id": "ing-10",
+      "name": "Nam",
+      "icon": "??",
+      "type": "rare"
+    },
+    {
+      "id": "ing-15",
+      "name": "Toi",
+      "icon": "??",
+      "type": "common"
+    },
+    {
+      "id": "ing-16",
+      "name": "Hanh",
+      "icon": "??",
+      "type": "common"
+    },
+    {
+      "id": "ing-17",
+      "name": "Gung",
+      "icon": "??",
+      "type": "common"
+    },
+    {
+      "id": "ing-18",
+      "name": "Ot",
+      "icon": "???",
+      "type": "common"
+    }
+  ],
+  "food_ingredients": [
+    {
+      "food_id": "food-001",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-001",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-001",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-001",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-002",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-002",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-002",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-003",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-003",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-003",
+      "ingredient_id": "ing-10"
+    },
+    {
+      "food_id": "food-003",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-004",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-004",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-004",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-004",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-005",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-005",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-005",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-006",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-006",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-006",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-007",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-008",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-008",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-008",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-009",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-009",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-010",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-010",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-010",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-011",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-011",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-012",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-012",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-012",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-012",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-013",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-013",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-013",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-013",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-014",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-014",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-014",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-015",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-015",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-015",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-015",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-016",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-016",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-016",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-016",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-017",
+      "ingredient_id": "ing-4"
+    },
+    {
+      "food_id": "food-017",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-017",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-017",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-018",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-018",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-018",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-019",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-019",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-020",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-020",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-020",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-021",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-021",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-021",
+      "ingredient_id": "ing-9"
+    },
+    {
+      "food_id": "food-021",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-022",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-022",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-022",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-023",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-023",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-023",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-024",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-024",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-024",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-024",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-025",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-025",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-026",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-026",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-026",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-026",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-027",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-027",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-027",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-028",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-028",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-028",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-029",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-029",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-029",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-029",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-030",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-030",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-030",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-031",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-031",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-031",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-031",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-032",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-032",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-032",
+      "ingredient_id": "ing-9"
+    },
+    {
+      "food_id": "food-032",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-033",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-033",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-033",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-033",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-034",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-034",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-034",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-035",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-035",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-035",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-035",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-036",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-036",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-036",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-037",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-037",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-037",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-037",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-038",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-038",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-038",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-039",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-039",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-039",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-040",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-040",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-040",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-041",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-041",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-041",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-042",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-042",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-042",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-042",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-043",
+      "ingredient_id": "ing-4"
+    },
+    {
+      "food_id": "food-043",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-043",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-044",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-044",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-045",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-045",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-045",
+      "ingredient_id": "ing-9"
+    },
+    {
+      "food_id": "food-045",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-046",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-046",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-047",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-047",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-047",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-048",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-048",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-048",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-049",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-049",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-049",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-049",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-050",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-050",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-050",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-051",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-051",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-051",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-052",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-052",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-053",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-053",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-053",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-054",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-054",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-055",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-055",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-055",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-055",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-056",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-056",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-056",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-056",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-057",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-057",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-057",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-058",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-058",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-058",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-058",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-059",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-059",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-059",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-060",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-060",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-060",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-060",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-061",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-061",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-062",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-062",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-063",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-063",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-063",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-064",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-064",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-065",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-065",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-065",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-066",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-066",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-067",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-067",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-067",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-068",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-068",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-069",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-069",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-069",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-069",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-070",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-070",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-070",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-070",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-071",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-071",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-071",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-072",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-072",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-072",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-073",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-073",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-073",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-074",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-074",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-075",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-075",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-075",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-076",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-076",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-076",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-077",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-077",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-078",
+      "ingredient_id": "ing-4"
+    },
+    {
+      "food_id": "food-078",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-078",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-079",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-079",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-080",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-080",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-080",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-081",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-081",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-081",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-081",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-082",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-082",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-082",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-083",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-083",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-083",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-083",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-084",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-084",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-084",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-084",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-085",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-085",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-085",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-085",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-086",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-086",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-086",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-087",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-087",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-087",
+      "ingredient_id": "ing-14"
+    },
+    {
+      "food_id": "food-087",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-088",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-088",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-089",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-089",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-089",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-090",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-090",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-091",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-091",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-092",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-092",
+      "ingredient_id": "ing-4"
+    },
+    {
+      "food_id": "food-092",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-093",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-093",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-093",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-093",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-094",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-094",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-095",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-095",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-096",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-096",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-096",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-096",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-097",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-097",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-097",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-098",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-098",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-098",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-099",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-099",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-099",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-099",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-100",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-100",
+      "ingredient_id": "ing-12"
+    },
+    {
+      "food_id": "food-100",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-101",
+      "ingredient_id": "ing-3"
+    },
+    {
+      "food_id": "food-101",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-101",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-102",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-102",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-102",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-102",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-103",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-103",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-104",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-104",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-105",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-105",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-105",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-106",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-106",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-106",
+      "ingredient_id": "ing-10"
+    },
+    {
+      "food_id": "food-106",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-107",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-107",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-107",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-107",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-108",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-108",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-108",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-109",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-109",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-109",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-110",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-110",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-111",
+      "ingredient_id": "ing-5"
+    },
+    {
+      "food_id": "food-111",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-111",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-112",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-112",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-112",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-113",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-113",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-114",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-114",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-114",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-114",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-115",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-115",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-115",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-116",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-116",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-117",
+      "ingredient_id": "ing-6"
+    },
+    {
+      "food_id": "food-117",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-117",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-118",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-118",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-118",
+      "ingredient_id": "ing-11"
+    },
+    {
+      "food_id": "food-119",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-119",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-120",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-120",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-121",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-121",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-121",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-122",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-122",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-123",
+      "ingredient_id": "ing-2"
+    },
+    {
+      "food_id": "food-123",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-123",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-124",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-125",
+      "ingredient_id": "ing-1"
+    },
+    {
+      "food_id": "food-125",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-125",
+      "ingredient_id": "ing-13"
+    },
+    {
+      "food_id": "food-126",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-127",
+      "ingredient_id": "ing-7"
+    },
+    {
+      "food_id": "food-127",
+      "ingredient_id": "ing-13"
+    }
+  ]
+}

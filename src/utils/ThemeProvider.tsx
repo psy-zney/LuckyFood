@@ -2,14 +2,15 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useColorScheme } from 'react-native';
 import { lightColors, darkColors, spacing, typography, borderRadius, shadows } from './theme';
 
-type ThemeColors = typeof lightColors;
+type ThemeColors = typeof lightColors | typeof darkColors;
+type ThemeShadows = typeof shadows.light | typeof shadows.dark;
 
 interface ThemeContextType {
   colors: ThemeColors;
   spacing: typeof spacing;
   typography: typeof typography;
   borderRadius: typeof borderRadius;
-  shadows: typeof shadows.light;
+  shadows: ThemeShadows;
   isDark: boolean;
   toggleTheme: () => void;
   setDarkMode: (isDark: boolean) => void;

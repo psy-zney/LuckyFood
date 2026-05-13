@@ -3,8 +3,9 @@ import { View, Text, Animated } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTheme } from '../utils/ThemeProvider';
+import { useAppStore } from '../store';
 
 import HomeScreen from '../screens/HomeScreen';
 import RandomWheelScreen from '../screens/RandomWheelScreen';
@@ -14,6 +15,10 @@ import FavouritesScreen from '../screens/FavouritesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import FoodDetailScreen from '../screens/FoodDetailScreen';
 import CalendarScreen from '../screens/CalendarScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import AdminDashboardScreen from '../screens/AdminDashboardScreen';
 
 export type RootTabParamList = {
   Home: undefined;
@@ -26,9 +31,12 @@ export type RootTabParamList = {
 
 export type RootStackParamList = {
   MainTabs: undefined;
+  AdminDashboard: undefined;
+  Auth: undefined;
   Search: undefined;
   Calendar: undefined;
   Profile: undefined;
+  Settings: undefined;
   FoodDetail: {
     food: {
       id: string;
@@ -41,45 +49,93 @@ export type RootStackParamList = {
   };
 };
 
+export type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+
+function AuthNavigator() {
+  return (
+    <AuthStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+      }}
+    >
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} />
+    </AuthStack.Navigator>
+  );
+}
 
 export default function AppNavigator() {
   const theme = useTheme();
+  const { user } = useAppStore();
+  const isAdmin = user.uid !== null && user.role === 'admin';
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen name="Search" component={SearchScreen} />
-        <Stack.Screen name="Calendar" component={CalendarScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen
-          name="FoodDetail"
-          component={FoodDetailScreen}
-          options={({ route }) => ({
-            title: route.params.food.name,
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: theme.colors.background,
-              elevation: 0,
-              shadowOpacity: 0,
-            },
-            headerTitleStyle: {
-              fontFamily: theme.typography.families.display,
-              fontSize: theme.typography.sizes.lg,
-              fontWeight: theme.typography.weights.bold,
-              color: theme.colors.text,
-            },
-            headerBackTitleStyle: {
-              fontFamily: theme.typography.families.body,
-              fontSize: theme.typography.sizes.md,
-              color: theme.colors.text,
-            },
-            headerTintColor: theme.colors.text,
-          })}
-        />
-      </Stack.Navigator>
+      {isAdmin ? (
+        <Stack.Navigator key="admin-stack" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Auth" component={AuthNavigator} />
+          <Stack.Screen
+            name="FoodDetail"
+            component={FoodDetailScreen}
+            options={({ route }) => ({
+              title: route.params.food.name,
+              headerShown: true,
+              headerStyle: {
+                backgroundColor: theme.colors.background,
+                elevation: 0,
+                shadowOpacity: 0,
+              },
+              headerTitleStyle: {
+                fontFamily: theme.typography.families.display,
+                fontSize: theme.typography.sizes.lg,
+                fontWeight: theme.typography.weights.bold,
+                color: theme.colors.text,
+              },
+              headerTintColor: theme.colors.text,
+            })}
+          />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator key="user-stack" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen name="Search" component={SearchScreen} />
+          <Stack.Screen name="Calendar" component={CalendarScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Auth" component={AuthNavigator} />
+          <Stack.Screen
+            name="FoodDetail"
+            component={FoodDetailScreen}
+            options={({ route }) => ({
+              title: route.params.food.name,
+              headerShown: true,
+              headerStyle: {
+                backgroundColor: theme.colors.background,
+                elevation: 0,
+                shadowOpacity: 0,
+              },
+              headerTitleStyle: {
+                fontFamily: theme.typography.families.display,
+                fontSize: theme.typography.sizes.lg,
+                fontWeight: theme.typography.weights.bold,
+                color: theme.colors.text,
+              },
+              headerTintColor: theme.colors.text,
+            })}
+          />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
@@ -94,7 +150,7 @@ const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme 
       friction: 6,
       useNativeDriver: true,
     }).start();
-  }, [focused]);
+  }, [focused, translateY]);
 
   if (isCenter) {
     return (
@@ -109,9 +165,7 @@ const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme 
             width: 56,
             height: 56,
             borderRadius: 28,
-            backgroundColor: focused
-              ? theme.colors.primary
-              : theme.colors.primaryContainer,
+            backgroundColor: focused ? theme.colors.primary : theme.colors.primaryContainer,
             alignItems: 'center',
             justifyContent: 'center',
             marginTop: -28,
@@ -131,15 +185,16 @@ const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme 
         <Text
           numberOfLines={1}
           style={{
-          color: focused ? theme.colors.primary : theme.colors.textSecondary,
-          fontFamily: theme.typography.families.body,
-          fontSize: 10,
-          fontWeight: theme.typography.weights.bold,
-          letterSpacing: 0,
-          marginTop: 6,
-          textAlign: 'center',
-          width: 75,
-        }}>
+            color: focused ? theme.colors.primary : theme.colors.textSecondary,
+            fontFamily: theme.typography.families.body,
+            fontSize: 10,
+            fontWeight: theme.typography.weights.bold,
+            letterSpacing: 0,
+            marginTop: 6,
+            textAlign: 'center',
+            width: 75,
+          }}
+        >
           {label}
         </Text>
       </Animated.View>
@@ -148,25 +203,21 @@ const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme 
 
   return (
     <Animated.View style={{ alignItems: 'center', transform: [{ translateY }] }}>
-      <MaterialIcons
-        name={name}
-        size={24}
-        color={color}
-        style={{ opacity: focused ? 1 : 0.6 }}
-      />
+      <MaterialIcons name={name} size={24} color={color} style={{ opacity: focused ? 1 : 0.6 }} />
       <Text
         numberOfLines={1}
         style={{
-        color: color,
-        fontFamily: theme.typography.families.body,
-        fontSize: 10,
-        fontWeight: focused ? theme.typography.weights.bold : theme.typography.weights.medium,
-        letterSpacing: 0,
-        marginTop: 4,
-        opacity: focused ? 1 : 0.8,
-        textAlign: 'center',
-        width: 75,
-      }}>
+          color,
+          fontFamily: theme.typography.families.body,
+          fontSize: 10,
+          fontWeight: focused ? theme.typography.weights.bold : theme.typography.weights.medium,
+          letterSpacing: 0,
+          marginTop: 4,
+          opacity: focused ? 1 : 0.8,
+          textAlign: 'center',
+          width: 75,
+        }}
+      >
         {label}
       </Text>
     </Animated.View>
@@ -180,34 +231,19 @@ function MainTabs() {
     <Tab.Navigator
       initialRouteName="Home"
       tabBar={(props) => (
-        <View style={{
-          backgroundColor: theme.isDark ? 'rgba(18,18,18,0.98)' : 'rgba(255,255,255,0.98)',
-          borderTopWidth: 1,
-          borderTopColor: theme.colors.borderSubtle,
-          elevation: 8,
-          shadowColor: theme.colors.text,
-          shadowOpacity: theme.isDark ? 0.3 : 0.08,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: -4 },
-        }}>
+        <View
+          style={{
+            backgroundColor: theme.isDark ? 'rgba(18,18,18,0.98)' : 'rgba(255,255,255,0.98)',
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.borderSubtle,
+            elevation: 8,
+            shadowColor: theme.colors.text,
+            shadowOpacity: theme.isDark ? 0.3 : 0.08,
+            shadowRadius: 12,
+            shadowOffset: { width: 0, height: -4 },
+          }}
+        >
           <BottomTabBar {...props} />
-          <View style={{ paddingBottom: 10 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 60, marginBottom: 4 }}>
-              <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.borderSubtle, opacity: 0.6 }} />
-              <MaterialIcons name="favorite" size={12} color="#FFB6C1" style={{ marginHorizontal: 8 }} />
-              <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.borderSubtle, opacity: 0.6 }} />
-            </View>
-            <Text style={{
-              textAlign: 'center',
-              fontSize: 9,
-              color: theme.colors.textSecondary,
-              fontFamily: theme.typography.families.body,
-              opacity: 0.6,
-              letterSpacing: 0.3,
-            }}>
-              Design & Development by zney_LQK
-            </Text>
-          </View>
         </View>
       )}
       screenOptions={{
@@ -224,59 +260,57 @@ function MainTabs() {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
-        tabBarLabelStyle: {
-          fontFamily: theme.typography.families.body,
-          fontSize: 11,
-          fontWeight: theme.typography.weights.medium,
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-          marginTop: 4,
-        },
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Khám Phá',
+          tabBarLabel: 'Khám phá',
           tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabItem name="home" label="Khám Phá" color={color} focused={focused} theme={theme} />
+            <AnimatedTabItem name="home" label="Khám phá" color={color} focused={focused} theme={theme} />
           ),
         }}
       />
 
-      {/* Center Tab – RandomWheel with visual highlight */}
       <Tab.Screen
         name="RandomWheel"
         component={RandomWheelScreen}
         options={{
-          tabBarLabel: 'Xúc Xắc',
+          tabBarLabel: 'Xúc xắc',
           tabBarIcon: ({ focused }) => (
-            <AnimatedTabItem name="casino" label="Xúc Xắc" focused={focused} isCenter theme={theme} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Filter"
-        component={FilterScreen}
-        options={{
-          tabBarLabel: 'Nguyên Liệu',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabItem name="tune" label="Nguyên Liệu" color={color} focused={focused} theme={theme} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Favourites"
-        component={FavouritesScreen}
-        options={{
-          tabBarLabel: 'Yêu Thích',
-          tabBarIcon: ({ color, focused }) => (
-            <AnimatedTabItem name={focused ? 'favorite' : 'favorite-border'} label="Yêu Thích" color={color} focused={focused} theme={theme} />
+            <AnimatedTabItem name="casino" label="Xúc xắc" focused={focused} isCenter theme={theme} />
           ),
         }}
       />
 
+      <Tab.Screen
+        name="Filter"
+        component={FilterScreen}
+        options={{
+          tabBarLabel: 'Nguyên liệu',
+          tabBarIcon: ({ color, focused }) => (
+            <AnimatedTabItem name="tune" label="Nguyên liệu" color={color} focused={focused} theme={theme} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Favourites"
+        component={FavouritesScreen}
+        options={{
+          tabBarLabel: 'Yêu thích',
+          tabBarIcon: ({ color, focused }) => (
+            <AnimatedTabItem
+              name={focused ? 'favorite' : 'favorite-border'}
+              label="Yêu thích"
+              color={color}
+              focused={focused}
+              theme={theme}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

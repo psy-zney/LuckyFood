@@ -4,9 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
-  Image,
   Animated,
   Dimensions,
   Share,
@@ -626,16 +624,5 @@ const createStyles = (theme: any) =>
       fontWeight: theme.typography.weights.bold,
       color: theme.colors.surface,
       letterSpacing: 0.3,
-    },
-    footer: {
-      alignItems: 'center',
-      paddingVertical: theme.spacing.lg,
-      marginTop: theme.spacing.md,
-    },
-    footerText: {
-      fontFamily: theme.typography.families.body,
-      fontSize: theme.typography.sizes.xs,
-      color: theme.colors.textSecondary,
-      textAlign: 'center',
     },
   });

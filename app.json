@@ -2,6 +2,7 @@
   "expo": {
     "name": "LuckyFood",
     "slug": "LuckyFood",
+    "scheme": "luckyfood",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zney295.LuckyFood"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.zney295.LuckyFood"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,7 +32,13 @@
     "plugins": [
       "expo-sqlite",
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1060999764283-m1mmnunbr78e379s0q321m9btq3psm4d"
+        }
+      ]
     ],
     "extra": {
       "eas": {

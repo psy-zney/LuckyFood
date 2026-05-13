@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Animated, Modal, Easing } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Animated, Easing } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -7,7 +7,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootTabParamList, RootStackParamList } from '../navigation/AppNavigator';
 import { useTheme } from '../utils/ThemeProvider';
 import { useStreak, useAppStore } from '../store';
-import { useAuth } from '../utils/AuthProvider';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FoodItem } from '../database/mockData';
 import { getDb } from '../database/db-service';
@@ -23,14 +22,11 @@ type Props = {
 export default function HomeScreen({ navigation }: Props) {
   const { current, highest } = useStreak();
   const theme = useTheme();
-  const { isAuthenticated } = useAuth();
   const { getTopFoods } = useAppStore();
   const [topFoods, setTopFoods] = React.useState<FoodItem[]>([]);
   const [dailyFoods, setDailyFoods] = React.useState<FoodItem[]>([]);
-  const [showMenu, setShowMenu] = useState(false);
 
   // Animation values - Staggered entry
-  const headerAnim = React.useRef(new Animated.Value(0)).current;
   const welcomeAnim = React.useRef(new Animated.Value(0)).current;
   const streakAnim = React.useRef(new Animated.Value(0)).current;
   const sectionsAnim = React.useRef(new Animated.Value(0)).current;
@@ -40,11 +36,6 @@ export default function HomeScreen({ navigation }: Props) {
   React.useEffect(() => {
     // Staggered entry animation
     Animated.sequence([
-      Animated.timing(headerAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
       Animated.timing(welcomeAnim, {
         toValue: 1,
         duration: 300,
