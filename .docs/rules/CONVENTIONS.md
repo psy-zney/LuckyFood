@@ -10,7 +10,14 @@ Tài liệu này định nghĩa các quy định chung mà tất cả các thàn
 - **Biến và Hàm (Variables/Functions):** Sử dụng `camelCase` (VD: `isLoggedIn`, `fetchRecipes()`).
 - **Hằng số (Constants):** Sử dụng `UPPER_SNAKE_CASE` (VD: `MAX_STREAK_DAYS`, `API_KEY`).
 
-## 2. Git & Versioning
+## 2. Tiêu chuẩn Mã nguồn (Skill Impeccable)
+- **Skill Impeccable**: Đây là nguyên tắc cốt lõi của dự án. Mọi dòng code được viết ra phải đảm bảo chất lượng hoàn hảo nhất:
+  - KHÔNG có lỗi chính tả trong UI, thông báo hay comments.
+  - Xử lý logic chặt chẽ, tối ưu và hạn chế tối đa các bug tiềm ẩn.
+  - Tuân thủ nghiêm ngặt các quy ước đặt tên và cấu trúc file.
+  - Code gọn gàng, sạch sẽ, luôn kiểm tra lại nhiều lần trước khi hoàn tất.
+
+## 3. Git & Versioning
 - **Mô hình Git:** Sử dụng Git Flow cơ bản (`main`, `develop`, và các nhánh `feature/`, `bugfix/`).
 - **Conventional Commits:** Tất cả commit message phải theo chuẩn Conventional Commits:
   - `feat: [mô tả]` (Thêm tính năng mới)

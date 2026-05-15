@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Alert,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../utils/ThemeProvider';
@@ -102,19 +94,9 @@ export default function AdminDashboardScreen({ navigation }: any) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Chức năng quản trị</Text>
-          <TouchableOpacity
-            style={styles.actionItem}
-            onPress={() => Alert.alert('Thông báo', 'Chức năng quản lý món ăn sẽ được mở rộng ở bước tiếp theo.')}
-          >
+          <TouchableOpacity style={styles.actionItem} onPress={() => navigation.navigate('AdminFoods')}>
             <MaterialIcons name="restaurant-menu" size={22} color={theme.colors.primary} />
-            <Text style={styles.actionText}>Quản lý món ăn</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionItem}
-            onPress={() => Alert.alert('Thông báo', 'Chức năng quản lý tài khoản sẽ được mở rộng ở bước tiếp theo.')}
-          >
-            <MaterialIcons name="supervisor-account" size={22} color={theme.colors.primary} />
-            <Text style={styles.actionText}>Quản lý tài khoản</Text>
+            <Text style={styles.actionText}>Quản lý món ăn (xem, sửa, xóa)</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionItem} onPress={() => navigation.navigate('Settings')}>
             <MaterialIcons name="settings" size={22} color={theme.colors.primary} />

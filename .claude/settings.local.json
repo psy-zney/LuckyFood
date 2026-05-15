@@ -5,7 +5,10 @@
       "Bash(npx tsc *)",
       "Bash(npx expo *)",
       "Bash(Get-ChildItem -Exclude \"FadeIn.tsx\",\"SlideUp.tsx\",\"ScaleIn.tsx\",\"StaggerIn.tsx\",\"Bounce.tsx\",\"Pulse.tsx\",\"index.ts\")",
-      "Bash(Remove-Item -Force)"
+      "Bash(Remove-Item -Force)",
+      "Bash(node upload-to-firebase.js)",
+      "Bash(node update-descriptions.js)",
+      "Bash(node update-icons.js)"
     ]
   }
 }

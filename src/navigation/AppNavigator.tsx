@@ -12,6 +12,7 @@ import RandomWheelScreen from '../screens/RandomWheelScreen';
 import FilterScreen from '../screens/FilterScreen';
 import SearchScreen from '../screens/SearchScreen';
 import FavouritesScreen from '../screens/FavouritesScreen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProfileScreen from '../screens/ProfileScreen';
 import FoodDetailScreen from '../screens/FoodDetailScreen';
 import CalendarScreen from '../screens/CalendarScreen';
@@ -19,6 +20,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import AdminDashboardScreen from '../screens/AdminDashboardScreen';
+import AdminFoodsScreen from '../screens/AdminFoodsScreen';
 
 export type RootTabParamList = {
   Home: undefined;
@@ -32,6 +34,7 @@ export type RootTabParamList = {
 export type RootStackParamList = {
   MainTabs: undefined;
   AdminDashboard: undefined;
+  AdminFoods: undefined;
   Auth: undefined;
   Search: undefined;
   Calendar: undefined;
@@ -74,68 +77,40 @@ function AuthNavigator() {
 
 export default function AppNavigator() {
   const theme = useTheme();
-  const { user } = useAppStore();
-  const isAdmin = user.uid !== null && user.role === 'admin';
+  useAppStore();
 
   return (
     <NavigationContainer>
-      {isAdmin ? (
-        <Stack.Navigator key="admin-stack" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-          <Stack.Screen
-            name="FoodDetail"
-            component={FoodDetailScreen}
-            options={({ route }) => ({
-              title: route.params.food.name,
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: theme.colors.background,
-                elevation: 0,
-                shadowOpacity: 0,
-              },
-              headerTitleStyle: {
-                fontFamily: theme.typography.families.display,
-                fontSize: theme.typography.sizes.lg,
-                fontWeight: theme.typography.weights.bold,
-                color: theme.colors.text,
-              },
-              headerTintColor: theme.colors.text,
-            })}
-          />
-        </Stack.Navigator>
-      ) : (
-        <Stack.Navigator key="user-stack" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="MainTabs" component={MainTabs} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-          <Stack.Screen name="Calendar" component={CalendarScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-          <Stack.Screen
-            name="FoodDetail"
-            component={FoodDetailScreen}
-            options={({ route }) => ({
-              title: route.params.food.name,
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: theme.colors.background,
-                elevation: 0,
-                shadowOpacity: 0,
-              },
-              headerTitleStyle: {
-                fontFamily: theme.typography.families.display,
-                fontSize: theme.typography.sizes.lg,
-                fontWeight: theme.typography.weights.bold,
-                color: theme.colors.text,
-              },
-              headerTintColor: theme.colors.text,
-            })}
-          />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+        <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+        <Stack.Screen name="AdminFoods" component={AdminFoodsScreen} />
+        <Stack.Screen
+          name="FoodDetail"
+          component={FoodDetailScreen}
+          options={({ route }) => ({
+            title: route.params.food.name,
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+              elevation: 0,
+              shadowOpacity: 0,
+            },
+            headerTitleStyle: {
+              fontFamily: theme.typography.families.display,
+              fontSize: theme.typography.sizes.lg,
+              fontWeight: theme.typography.weights.bold,
+              color: theme.colors.text,
+            },
+            headerTintColor: theme.colors.text,
+          })}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -226,6 +201,7 @@ const AnimatedTabItem = ({ name, label, color, focused, isCenter = false, theme 
 
 function MainTabs() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -244,6 +220,18 @@ function MainTabs() {
           }}
         >
           <BottomTabBar {...props} />
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 10,
+              color: theme.colors.textSecondary,
+              paddingBottom: insets.bottom > 0 ? insets.bottom : 12,
+              marginTop: -6,
+              opacity: 0.6,
+            }}
+          >
+            design & dev by zney 295
+          </Text>
         </View>
       )}
       screenOptions={{

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, Animated, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../utils/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -77,7 +77,11 @@ export default function ProfileScreen({ navigation }: any) {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.accountBox}>
           <View style={styles.avatarContainer}>
-            <MaterialIcons name={isAuthenticated ? 'person' : 'person-outline'} size={40} color={theme.colors.surface} />
+            {user.avatarUrl ? (
+              <Image source={{ uri: user.avatarUrl }} style={{ width: 64, height: 64, borderRadius: 32 }} />
+            ) : (
+              <MaterialIcons name={isAuthenticated ? 'person' : 'person-outline'} size={40} color={theme.colors.surface} />
+            )}
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.userName}>{isAuthenticated ? user.displayName || 'Người dùng' : 'Khách'}</Text>

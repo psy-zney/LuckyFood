@@ -439,7 +439,7 @@ const createStyles = (theme: any) =>
       flexDirection: 'row',
       alignItems: 'center',
       paddingLeft: theme.spacing.md,
-      paddingRight: theme.spacing.sm, // Dịch qua phải 1 chút (thay vì lg)
+      paddingRight: theme.spacing.md,
       paddingVertical: theme.spacing.sm,
       backgroundColor: theme.colors.background,
       borderBottomWidth: 1,

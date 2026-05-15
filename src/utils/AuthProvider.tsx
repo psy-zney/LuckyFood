@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, NativeModules, Platform } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useAppStore } from '../store';
 
@@ -30,14 +30,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { user, setUser } = useAppStore();
   const [isAuthenticated, setIsAuthenticated] = useState(!!user.uid);
   const [isLoading, setIsLoading] = useState(false);
+  const hasGoogleNativeModule = Boolean((NativeModules as any)?.RNGoogleSignin);
 
   useEffect(() => {
-    GoogleSignin.configure({
-      iosClientId: '1060999764283-m1mmnunbr78e379s0q321m9btq3psm4d.apps.googleusercontent.com',
-      webClientId: '1060999764283-ag0lc1hkfphaik6eg6f1tnmb5j08s7a9.apps.googleusercontent.com',
-      offlineAccess: true,
-    });
-  }, []);
+    if (!hasGoogleNativeModule) return;
+    try {
+      GoogleSignin.configure({
+        iosClientId: '1060999764283-m1mmnunbr78e379s0q321m9btq3psm4d.apps.googleusercontent.com',
+        webClientId: '1060999764283-ag0lc1hkfphaik6eg6f1tnmb5j08s7a9.apps.googleusercontent.com',
+        offlineAccess: true,
+      });
+    } catch (e) {
+      console.error('[Auth] GoogleSignin configure error:', e);
+    }
+  }, [hasGoogleNativeModule]);
 
   useEffect(() => {
     setIsAuthenticated(!!user.uid);
@@ -59,6 +65,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
+      if (!hasGoogleNativeModule) {
+        Alert.alert(
+          'Google Sign-In chưa sẵn sàng',
+          Platform.OS === 'android'
+            ? 'Bạn đang chạy bản app không có native module Google. Hãy build lại bằng `expo run:android` hoặc dev client.'
+            : 'Bản app hiện tại chưa tích hợp native module Google Sign-In.'
+        );
+        return;
+      }
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       const googleUser = response.data?.user;
@@ -102,7 +117,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await GoogleSignin.signOut();
+      if (hasGoogleNativeModule) {
+        await GoogleSignin.signOut();
+      }
     } catch (error) {
       console.error('[Auth] Google Logout error:', error);
     }

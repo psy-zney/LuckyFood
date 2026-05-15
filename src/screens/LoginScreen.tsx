@@ -41,12 +41,18 @@ export default function LoginScreen({ navigation }: Props) {
   const formValid = emailTrimmed.length > 0 && password.length > 0;
 
   const closeAuthFlow = () => {
-    const parent = navigation.getParent?.();
-    if (parent?.canGoBack?.()) {
-      parent.goBack();
+    const role = useAppStore.getState().user.role;
+    if (role === 'admin') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'AdminDashboard' }],
+      });
       return;
     }
-    navigation.goBack();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'MainTabs', params: { screen: 'Home' } }],
+    });
   };
 
   const applyDemoAccount = (account: { email: string; password: string }) => {

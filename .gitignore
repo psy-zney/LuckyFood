@@ -42,3 +42,9 @@ yarn-error.*
 
 # IDEs
 .idea/
+
+# Sensitive files
+google-services.json
+serviceAccountKey.json
+.env
+.env.*
