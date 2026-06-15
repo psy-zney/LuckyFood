@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Alert, NativeModules, Platform } from 'react-native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+const GoogleSignin: any = {
+  configure: () => {},
+  hasPlayServices: async () => {},
+  signIn: async () => ({ data: { user: null } }),
+  signOut: async () => {},
+};
 import { useAppStore } from '../store';
 
 interface AuthContextType {
